@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarkari Vidya Library | ಸರ್ಕಾರಿ ವಿದ್ಯಾ ಗ್ರಂಥಾಲಯ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-blue-900 text-white text-xs py-1.5 px-4 text-center font-medium flex justify-center items-center gap-2">
+        <span id="banner-text">🟢 Open NCERT Textbooks & Differentiated Subject Quizzes • Grades 6 to 10</span>
+        <button onclick="toggleOfflineNotice()" class="underline hover:text-blue-200 text-xs ml-2" id="banner-btn">ℹ️ Help</button>
+    </div>
+
+    <!-- Header / Navigation Bar -->
+    <header class="bg-blue-800 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white text-blue-800 p-2 rounded-lg font-bold text-xl shadow">📚</div>
+                <div>
+                    <h1 class="font-bold text-lg sm:text-xl tracking-tight leading-snug" id="app-title">Sarkari Vidya Library</h1>
+                    <p class="text-xs text-blue-200 hidden sm:block" id="app-subtitle">NCERT Digital Portal • ಕರ್ನಾಟಕ ಸರ್ಕಾರ</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-4 sm:space-x-6">
+                <nav class="hidden md:flex space-x-6 text-sm font-medium">
+                    <a href="#finder" class="hover:text-blue-200 transition" id="nav-finder">Open Textbooks</a>
+                    <a href="#resources" class="hover:text-blue-200 transition" id="nav-resources">Subject Hub (6–10)</a>
+                </nav>
+
+                <div class="bg-blue-950 p-1 rounded-lg flex items-center shadow-inner">
+                    <button onclick="setLanguage('en')" id="lang-en" class="px-3 py-1 rounded-md text-xs sm:text-sm font-semibold transition bg-white text-blue-800 shadow">EN</button>
+                    <button onclick="setLanguage('kn')" id="lang-kn" class="px-3 py-1 rounded-md text-xs sm:text-sm font-semibold transition text-blue-200 hover:text-white">ಕನ್ನಡ</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- Hero & Grade Selector (6 to 10) -->
+        <section class="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-2xl p-6 sm:p-8 text-white shadow-lg mb-8 relative overflow-hidden">
+            <div class="relative z-10 max-w-3xl">
+                <span class="bg-blue-500/40 text-blue-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-3 inline-block" id="hero-badge">NCERT Central Syllabus Hub (Classes 6–10)</span>
+                <h2 class="text-2xl sm:text-3xl font-bold mb-2" id="hero-heading">Open NCERT Textbooks & Differentiated Subject Quizzes</h2>
+                <p class="text-blue-100 text-sm sm:text-base mb-5" id="hero-desc">Access dedicated, individual subject textbooks and 15-question assessments clearly separated for every grade from 6 to 10.</p>
+                
+                <!-- Grade Filter Pills -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs sm:text-sm font-medium text-blue-200 mr-1" id="grade-label">Filter Class:</span>
+                    <button onclick="filterGrade('all')" class="grade-btn bg-white text-blue-800 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold shadow transition" data-grade="all" id="grade-all-btn">All (6–10)</button>
+                    <button onclick="filterGrade('6')" class="grade-btn bg-blue-900/60 text-blue-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium hover:bg-blue-900 transition" data-grade="6">Class 6</button>
+                    <button onclick="filterGrade('7')" class="grade-btn bg-blue-900/60 text-blue-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium hover:bg-blue-900 transition" data-grade="7">Class 7</button>
+                    <button onclick="filterGrade('8')" class="grade-btn bg-blue-900/60 text-blue-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium hover:bg-blue-900 transition" data-grade="8">Class 8</button>
+                    <button onclick="filterGrade('9')" class="grade-btn bg-blue-900/60 text-blue-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium hover:bg-blue-900 transition" data-grade="9">Class 9</button>
+                    <button onclick="filterGrade('10')" class="grade-btn bg-blue-900/60 text-blue-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium hover:bg-blue-900 transition" data-grade="10">Class 10</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- LIVE OPEN NCERT TEXTBOOKS LAUNCHER -->
+        <section id="finder" class="bg-white border border-blue-200 rounded-2xl p-6 shadow-sm mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2" id="finder-title">
+                        <span>📖</span> Open NCERT Textbooks Direct Launcher
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-500" id="finder-desc">Directly open official Open NCERT Textbooks and PM eVidya video channels.</p>
+                </div>
+                <span class="text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full self-start">Live NCERT Sync</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" id="lbl-board">1. Platform</label>
+                    <select id="sel-board" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm bg-slate-50 focus:outline-none focus:border-blue-600">
+                        <option value="ncert">Open NCERT Textbooks Portal</option>
+                        <option value="diksha">DIKSHA Portal</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" id="lbl-class">2. Select Class (6–10)</label>
+                    <select id="sel-class" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm bg-slate-50 focus:outline-none focus:border-blue-600">
+                        <option value="6">Class 6</option>
+                        <option value="7">Class 7</option>
+                        <option value="8">Class 8</option>
+                        <option value="9">Class 9</option>
+                        <option value="10" selected>Class 10</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" id="lbl-subject">3. Subject</label>
+                    <input type="text" id="inp-subject" placeholder="Science, Maths, History..." class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm bg-slate-50 focus:outline-none focus:border-blue-600">
+                </div>
+
+                <div class="flex gap-2">
+                    <button onclick="launchNcertBook()" class="flex-1 bg-blue-700 hover:bg-blue-800 text-white text-xs sm:text-sm font-semibold py-2.5 px-3 rounded-lg transition shadow-sm" id="btn-find-pdf">
+                        📖 Open Books
+                    </button>
+                    <button onclick="launchNcertVideo()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold py-2.5 px-3 rounded-lg transition shadow-sm" id="btn-find-vid">
+                        ▶️ Videos
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resource Catalogue Tabs -->
+        <div id="resources" class="flex border-b border-slate-200 mb-6 overflow-x-auto pt-2">
+            <button onclick="switchTab('quizzes')" id="tab-quizzes" class="tab-btn flex items-center space-x-2 py-3 px-6 border-b-2 font-semibold text-sm sm:text-base border-blue-600 text-blue-600 whitespace-nowrap">
+                <span>📝</span>
+                <span id="tab-title-quizzes">15-Question Subject Quizzes (6–10)</span>
+            </button>
+            <button onclick="switchTab('textbooks')" id="tab-textbooks" class="tab-btn flex items-center space-x-2 py-3 px-6 border-b-2 font-medium text-sm sm:text-base border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap">
+                <span>📖</span>
+                <span id="tab-title-textbooks">Open NCERT Textbooks</span>
+            </button>
+            <button onclick="switchTab('videos')" id="tab-videos" class="tab-btn flex items-center space-x-2 py-3 px-6 border-b-2 font-medium text-sm sm:text-base border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap">
+                <span>▶️</span>
+                <span id="tab-title-videos">NCERT Video Lessons</span>
+            </button>
+        </div>
+
+        <!-- TAB 1: QUIZZES -->
+        <div id="section-quizzes" class="catalogue-section">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-800" id="quiz-header">15-Question Differentiated Subject Quizzes (Classes 6 to 10)</h3>
+                <span class="text-xs text-slate-600 bg-slate-200 px-2.5 py-1 rounded-full font-medium" id="quiz-count">0 quizzes</span>
+            </div>
+            
+            <div id="quiz-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+            <!-- Active Quiz Player -->
+            <div id="quiz-player" class="hidden bg-white rounded-xl shadow-md border border-slate-200 p-6 sm:p-8 max-w-3xl mx-auto">
+                <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
+                    <div>
+                        <span id="quiz-player-badge" class="text-xs bg-blue-100 text-blue-700 font-semibold px-2.5 py-1 rounded-md">Science</span>
+                        <h4 id="quiz-player-title" class="text-xl font-bold text-slate-800 mt-1">Quiz Title</h4>
+                    </div>
+                    <button onclick="exitQuiz()" class="text-slate-500 hover:text-slate-700 font-bold text-sm bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition" id="quiz-exit-btn">✕ Exit Quiz</button>
+                </div>
+
+                <div id="quiz-question-container"></div>
+
+                <div id="quiz-result-container" class="hidden text-center py-6">
+                    <div class="text-6xl mb-3">🎉</div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-2" id="result-heading">Quiz Completed!</h3>
+                    <p class="text-slate-600 mb-6 text-lg"><span id="score-display">0</span> / <span id="total-display">0</span></p>
+                    <div id="result-message" class="text-sm font-medium mb-6 p-3 bg-blue-50 text-blue-700 rounded-lg max-w-md mx-auto"></div>
+                    <button onclick="restartQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-xl shadow transition" id="restart-btn">Restart Quiz</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: TEXTBOOKS -->
+        <div id="section-textbooks" class="catalogue-section hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-800" id="textbook-header">Open NCERT Textbooks (Classes 6 to 10)</h3>
+                <span class="text-xs text-slate-600 bg-slate-200 px-2.5 py-1 rounded-full font-medium" id="textbook-count">0 items</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="textbooks-grid"></div>
+        </div>
+
+        <!-- TAB 3: VIDEO LESSONS -->
+        <div id="section-videos" class="catalogue-section hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-800" id="video-header">Official NCERT & PM eVidya Video Channels</h3>
+                <span class="text-xs text-slate-600 bg-slate-200 px-2.5 py-1 rounded-full font-medium" id="video-count">0 items</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="videos-grid"></div>
+        </div>
+
+        <!-- Official Portals Directory -->
+        <section id="portals" class="mt-12 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <h3 class="text-lg font-bold text-slate-800 mb-2" id="portals-heading">🏛️ Open NCERT Portals & Repositories</h3>
+            <p class="text-sm text-slate-600 mb-4" id="portals-desc">Access direct central government servers:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener noreferrer" class="p-4 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition block">
+                    <div class="font-bold text-blue-700 text-sm">Open NCERT Textbooks Portal ↗</div>
+                    <div class="text-xs text-slate-500 mt-1">Official central textbooks for Classes 6 to 10</div>
+                </a>
+                <a href="https://diksha.gov.in/" target="_blank" rel="noopener noreferrer" class="p-4 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition block">
+                    <div class="font-bold text-blue-700 text-sm">DIKSHA Digital Platform ↗</div>
+                    <div class="text-xs text-slate-500 mt-1">Video lessons, QR interactive content & worksheets</div>
+                </a>
+                <a href="https://www.youtube.com/@NCERTOFFICIAL" target="_blank" rel="noopener noreferrer" class="p-4 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition block">
+                    <div class="font-bold text-blue-700 text-sm">NCERT Official YouTube ↗</div>
+                    <div class="text-xs text-slate-500 mt-1">PM eVidya live and recorded school broadcasts</div>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-300 py-8 mt-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <p class="font-semibold text-white" id="footer-title">Open NCERT Digital Library & Assessment Grid</p>
+                <p class="text-xs text-slate-400 mt-1" id="footer-desc">Central curriculum learning resources for Grades 6 to 10.</p>
+            </div>
+            <div class="text-xs text-slate-400">
+                <span id="footer-copy">© 2026 National Educational Resource Network</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Application Logic & Differentiated Subject Datasets -->
+    <script>
+        const translations = {
+            en: {
+                bannerText: "🟢 Open NCERT Textbooks & Differentiated Subject Quizzes • Grades 6 to 10",
+                bannerBtn: "ℹ️ Help",
+                appTitle: "Sarkari Vidya Library",
+                appSubtitle: "NCERT Digital Portal • ಕರ್ನಾಟಕ ಸರ್ಕಾರ",
+                navFinder: "Open Textbooks",
+                navResources: "Subject Hub (6–10)",
+                heroBadge: "NCERT Central Syllabus Hub (Classes 6–10)",
+                heroHeading: "Open NCERT Textbooks & Differentiated Subject Quizzes",
+                heroDesc: "Access dedicated, individual subject textbooks and 15-question assessments clearly separated for every grade from 6 to 10.",
+                gradeLabel: "Filter Class:",
+                gradeAll: "All (6–10)",
+                finderTitle: "📖 Open NCERT Textbooks Direct Launcher",
+                finderDesc: "Directly open official Open NCERT Textbooks and PM eVidya video channels.",
+                lblBoard: "1. Platform",
+                lblClass: "2. Select Class (6–10)",
+                lblSubject: "3. Subject",
+                btnFindPdf: "📖 Open Books",
+                btnFindVid: "▶️ Videos",
+                tabTitleQuizzes: "15-Question Subject Quizzes (6–10)",
+                tabTitleTextbooks: "Open NCERT Textbooks",
+                tabTitleVideos: "NCERT Video Lessons",
+                textbookHeader: "Open NCERT Textbooks (Classes 6 to 10)",
+                videoHeader: "Official NCERT & PM eVidya Video Channels",
+                quizHeader: "15-Question Differentiated Subject Quizzes (Classes 6 to 10)",
+                readBtn: "Open NCERT Textbooks ↗",
+                watchBtn: "Watch NCERT Videos ↗",
+                startQuizBtn: "Start 15-Q Quiz",
+                exitQuiz: "✕ Exit Quiz",
+                quizCompleted: "Quiz Completed!",
+                restartQuiz: "Restart Quiz",
+                portalsHeading: "🏛️ Open NCERT Portals & Repositories",
+                portalsDesc: "Access direct central government servers:",
+                footerTitle: "Open NCERT Digital Library & Assessment Grid",
+                footerDesc: "Central curriculum learning resources for Grades 6 to 10.",
+                footerCopy: "© 2026 National Educational Resource Network",
+                offlineAlert: "Portal & Quiz Information:\n• Each subject and class has its own dedicated textbook and 15-question quiz.\n• All quizzes run locally in your browser with instant scoring and detailed bilingual explanations.",
+                scoreMsgGreat: "Outstanding! You have mastered this subject topic.",
+                scoreMsgGood: "Good job! Review the explanations to achieve perfection.",
+                scoreMsgRetry: "Keep practicing! Review your Open NCERT Textbooks chapter and retry."
+            },
+            kn: {
+                bannerText: "🟢 ಮುಕ್ತ NCERT ಪಠ್ಯಪುಸ್ತಕಗಳು ಮತ್ತು ಪ್ರತ್ಯೇಕ ವಿಷಯ ರಸಪ್ರಶ್ನೆಗಳು • 6 ರಿಂದ 10ನೇ ತರಗತಿ",
+                bannerBtn: "ℹ️ ಮಾಹಿತಿ",
+                appTitle: "ಸರ್ಕಾರಿ ವಿದ್ಯಾ ಗ್ರಂಥಾಲಯ",
+                appSubtitle: "NCERT ಡಿಜಿಟಲ್ ಪೋರ್ಟಲ್ • ಕರ್ನಾಟಕ ಸರ್ಕಾರ",
+                navFinder: "ಪುಸ್ತಕಗಳನ್ನು ತೆರೆಯಿರಿ",
+                navResources: "ವಿಷಯ ಕೇಂದ್ರ (6–10)",
+                heroBadge: "NCERT ಕೇಂದ್ರ ಪಠ್ಯಕ್ರಮ ಕೇಂದ್ರ (6–10ನೇ ತರಗತಿ)",
+                heroHeading: "ಮುಕ್ತ NCERT ಪಠ್ಯಪುಸ್ತಕಗಳು ಮತ್ತು ಪ್ರತ್ಯೇಕ ವಿಷಯ ರಸಪ್ರಶ್ನೆಗಳು",
+                heroDesc: "6 ರಿಂದ 10ನೇ ತರಗತಿಗಾಗಿ ಪ್ರತ್ಯೇಕವಾಗಿ ವಿಂಗಡಿಸಲಾದ ಅಧಿಕೃತ ಮುಕ್ತ NCERT ಪಠ್ಯಪುಸ್ತಕಗಳು ಮತ್ತು ರಸಪ್ರಶ್ನೆಗಳನ್ನು ಪ್ರವೇಶಿಸಿ.",
+                gradeLabel: "ತರಗತಿ ಆಯ್ಕೆ:",
+                gradeAll: "ಎಲ್ಲಾ (6–10)",
+                finderTitle: "📖 ಮುಕ್ತ NCERT ಪಠ್ಯಪುಸ್ತಕಗಳ ನೇರ ಲಾಂಚರ್",
+                finderDesc: "ಅಧಿಕೃತ ಮುಕ್ತ NCERT ಪಠ್ಯಪುಸ್ತಕಗಳು ಮತ್ತು PM eVidya ವೀಡಿಯೊ ಚಾನೆಲ್‌ಗಳನ್ನು ನೇರವಾಗಿ ತೆರೆಯಿರಿ.",
+                lblBoard: "1. ವೇದಿಕೆ",
+                lblClass: "2. ತರಗತಿ ಆಯ್ಕೆ (6–10)",
+                lblSubject: "3. ವಿಷಯ",
+                btnFindPdf: "📖 ಪುಸ್ತಕಗಳನ್ನು ತೆರೆಯಿರಿ",
+                btnFindVid: "▶️ ವೀಡಿಯೊಗಳು",
+                tabTitleQuizzes: "15 ಪ್ರಶ್ನೆಗಳ ವಿಷಯ ರಸಪ್ರಶ್ನೆಗಳು (6–10)",
+                tabTitleTextbooks: "ಮುಕ್ತ NCERT ಪಠ್ಯಪುಸ್ತಕಗಳು",
+                tabTitleVideos: "NCERT ವೀಡಿಯೊ ಪಾಠಗಳು",
+                textbookHeader: "ಮುಕ್ತ NCERT ಪಠ್ಯಪುಸ್ತಕಗಳು (6 ರಿಂದ 10ನೇ ತರಗತಿ)",
+                videoHeader: "ಅಧಿಕೃತ NCERT ಮತ್ತು PM eVidya ವೀಡಿಯೊ ಚಾನೆಲ್‌ಗಳು",
+                quizHeader: "15 ಪ್ರಶ್ನೆಗಳ ಪ್ರತ್ಯೇಕ ವಿಷಯ ರಸಪ್ರಶ್ನೆಗಳು (6 ರಿಂದ 10ನೇ ತರಗತಿ)",
+                readBtn: "Open NCERT Textbooks ↗",
+                watchBtn: "NCERT ವೀಡಿಯೊ ವೀಕ್ಷಿಸಿ ↗",
+                startQuizBtn: "15 ಪ್ರಶ್ನೆಗಳ ರಸಪ್ರಶ್ನೆ ಆರಂಭಿಸಿ",
+                exitQuiz: "✕ ಹೊರಬನ್ನಿ",
+                quizCompleted: "ರಸಪ್ರಶ್ನೆ ಪೂರ್ಣಗೊಂಡಿದೆ!",
+                restartQuiz: "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+                portalsHeading: "🏛️ ಮುಕ್ತ NCERT ಪೋರ್ಟಲ್‌ಗಳು ಮತ್ತು ಭಂಡಾರಗಳು",
+                portalsDesc: "ನೇರ ಕೇಂದ್ರ ಸರ್ಕಾರದ ಸರ್ವರ್‌ಗಳನ್ನು ಪ್ರವೇಶಿಸಿ:",
+                footerTitle: "ಮುಕ್ತ NCERT ಡಿಜಿಟಲ್ ಗ್ರಂಥಾಲಯ ಮತ್ತು ಮೌಲ್ಯಮಾಪನ ಜಾಲ",
+                footerDesc: "6 ರಿಂದ 10ನೇ ತರಗತಿಗಾಗಿ ಕೇಂದ್ರ ಪಠ್ಯಕ್ರಮದ ಕಲಿಕಾ ಸಂಪನ್ಮೂಲಗಳು.",
+                footerCopy: "© 2026 ರಾಷ್ಟ್ರೀಯ ಶೈಕ್ಷಣಿಕ ಸಂಪನ್ಮೂಲ ಜಾಲ",
+                offlineAlert: "ಪೋರ್ಟಲ್ ಮತ್ತು ರಸಪ್ರಶ್ನೆ ಮಾಹಿತಿ:\n• ಪ್ರತಿ ತರಗತಿ ಮತ್ತು ವಿಷಯಕ್ಕೆ ಪ್ರತ್ಯೇಕ ಪಠ್ಯಪುಸ್ತಕ ಹಾಗೂ 15 ಪ್ರಶ್ನೆಗಳ ರಸಪ್ರಶ್ನೆ ಇದೆ.\n• ಎಲ್ಲಾ ರಸಪ್ರಶ್ನೆಗಳು ತಕ್ಷಣದ ಅಂಕಗಳೊಂದಿಗೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತವೆ.",
+                scoreMsgGreat: "ಅದ್ಭುತ! ನೀವು ಈ ವಿಷಯದಲ್ಲಿ ನುರಿತವರಾಗಿದ್ದೀರಿ.",
+                scoreMsgGood: "ಉತ್ತಮ ಕೆಲಸ! ಪರಿಪೂರ್ಣತೆಗಾಗಿ ವಿವರಣೆಗಳನ್ನು ಪರಿಶೀಲಿಸಿ.",
+                scoreMsgRetry: "ಅಭ್ಯಾಸ ಮುಂದುವರಿಸಿ! ಮುಕ್ತ NCERT ಪಠ್ಯಪುಸ್ತಕವನ್ನು ಮತ್ತೊಮ್ಮೆ ಓದಿ ಪ್ರಯತ್ನಿಸಿ."
+            }
+        };
+
+        let currentLang = 'en';
+        let currentGradeFilter = 'all';
+
+        // --- Launcher Logic ---
+        function launchNcertBook() {
+            const board = document.getElementById('sel-board').value;
+            const grade = document.getElementById('sel-class').value;
+            let targetUrl = '';
+            if (board === 'ncert') {
+                targetUrl = 'https://ncert.nic.in/textbook.php';
+            } else {
+                targetUrl = `https://diksha.gov.in/explore?key=Class%20${grade}%20NCERT`;
+            }
+            window.open(targetUrl, '_blank', 'noopener,noreferrer');
+        }
+
+        function launchNcertVideo() {
+            const grade = document.getElementById('sel-class').value;
+            const subject = document.getElementById('inp-subject').value.trim();
+            const query = encodeURIComponent(`Class ${grade} ${subject} NCERT Official`);
+            window.open(`https://www.youtube.com/@NCERTOFFICIAL/search?query=${query}`, '_blank', 'noopener,noreferrer');
+        }
+
+        // --- Fully Differentiated Open NCERT Textbooks Repository (Grades 6–10 Individual Subjects) ---
+        const textbooksData = [
+            // Class 6
+            { id: 1, grade: '6', subjectEn: 'Mathematics (Class 6)', subjectKn: 'ಗಣಿತ (6ನೇ ತರಗತಿ)', titleEn: 'Ganita Prakash - Class 6 Mathematics', titleKn: 'ಗಣಿತ ಪ್ರಕಾಶ - 6ನೇ ತರಗತಿ ಗಣಿತ', descEn: 'Official Open NCERT textbook for Class 6 mathematics and geometry.', descKn: '6ನೇ ತರಗತಿ ಗಣಿತ ಮತ್ತು ಜ್ಯಾಮಿತಿ ಅಧಿಕೃತ ಪಠ್ಯಪುಸ್ತಕ.', icon: '📐', source: 'Open NCERT Textbooks', pdfUrl: 'https://ncert.nic.in/textbook.php' },
+            { id: 2, grade: '6', subjectEn: 'Science (Class 6)', subjectKn: 'ವಿಜ್ಞಾನ (6ನೇ ತರಗತಿ)', titleEn: 'Curiosity - Class 6 General Science', titleKn: 'ಕ್ಯೂರಿಯಾಸಿಟಿ - 6ನೇ ತರಗತಿ ವಿಜ್ಞಾನ', descEn: 'Official Open NCERT textbook exploring food sources, habitats, and materials.', descKn: '6ನೇ ತರಗತಿ ವಿಜ್ಞಾನ ಅಧಿಕೃತ ಪಠ್ಯಪುಸ್ತಕ.', icon: '🔬', source: 'Open NCERT Textbooks', pdfUrl: 'https://ncert.nic.in/textbook.php' },
+            { id: 3, grade: '6', subjectEn: 'Social Science (Class 6)', subjectKn: 'ಸಮಾಜ ವಿಜ್ಞಾನ (6ನೇ ತರಗತಿ)', titleEn: 'Class 6 Social Science: Exploring Society', titleKn: '6ನೇ ತರಗತಿ ಸಮಾಜ ವಿಜ್ಞಾನ ಪಠ್ಯಪುಸ್ತಕ', descEn: 'Official Open NCERT textbook covering history, geography, and civic life.', descKn: '6ನೇ ತರಗತಿ ಸಮಾಜ ವಿಜ್ಞಾನ ಅಧಿಕೃತ ಪಠ್ಯಪುಸ್ತಕ.', icon: '🌍', source: 'Open NCERT Textbooks', pdfUrl: 'https://ncert.nic.in/textbook.php' },
+
+            // Class 7
+            { id: 4, grade: '7', subjectEn: 'Mathematics (Class 7)', subjectKn: 'ಗಣಿತ (7ನೇ ತರಗತಿ)', titleEn: 'Class 7 Mathematics Textbook', titleKn: '7ನೇ ತರಗತಿ ಗಣಿತ ಪಠ್ಯಪುಸ್ತಕ', descEn: 'Official Open NCERT textbook covering algebraic expressions and fractions.', descKn: '7ನೇ ತರಗತಿ ಗಣಿತ ಅಧಿಕೃತ ಪಠ್ಯಪುಸ್ತಕ.', icon: '📊', source: 'Open NCERT Textbooks', pdfUrl: 'https://ncert.nic.in/textbook.php' },
+            { id: 5, grade: '7', subjectEn: 'Science (Class 7)', subjectKn: 'ವಿಜ್ಞಾನ (7ನೇ ತರಗತಿ)', titleEn: 'Class 7 General Science Textbook', titleKn: '7ನೇ ತರಗತಿ ವಿಜ್ಞಾನ ಪಠ್ಯಪುಸ್ತಕ', descEn: 'Official Open NCERT textbook covering heat, acids, respiration, and reproduction.', descKn: '7ನೇ ತರಗತಿ ವಿಜ್ಞಾನ ಅಧಿಕೃತ ಪಠ್ಯಪುಸ್ತಕ.', icon: '🧪', source: 'Open NCERT Textbooks', pdfUrl: 'https://ncert.nic.in/textbook.php' },
+            { id: 6, grade: '7', subjectEn: 'Social Science (Class 7)', subjectKn: 'ಸಮಾಜ ವಿಜ್ಞಾನ (7ನೇ ತರಗತಿ)', titleEn: 'Class 7 Our Environment & Social Life', titleKn: '7ನೇ ತರಗತಿ ನಮ್ಮ ಪರಿಸರ ಮತ್ತು ಇತಿಹಾಸ', descEn: 'Official Open NCERT textbook for Class 7 history and geography.', descKn: '7ನೇ ತರಗತಿ ಸಮಾಜ ವಿಜ್ಞಾನ ಅಧಿಕೃತ ಪಠ್ಯಪುಸ್ತಕ.', icon: '🏛️', source: 'Open NCERT Textbooks', pdfUrl: 'https://ncert.nic.in/textbook.php' },
+
+            // Class 8
+            { id: 7, grade: '8', subjectEn: 'Mathematics (Class 8)', subjectKn: 'ಗಣಿತ (8ನೇ ತರಗತಿ)', titleEn: 'Class 8 Mathematics Textbook', titleKn: '8ನೇ ತರಗತಿ ಗಣಿತ ಪಠ್ಯಪುಸ್ತಕ', descEn: 'Official Open NCERT textbook covering rational numbers, squares, and cubes.', descKn: '8ನೇ ತರಗತಿ ಗಣಿತ ಅಧಿಕೃತ ಪಠ್ಯಪುಸ್ತಕ.', icon: '📐', source: 'Open NCERT Textbooks', pdfUrl: 'https://ncert.nic.in/textbook.php' },
+            { id: 8, grade: '8', subjectEn: 'Science (Class 8)', subjectKn: 'ವಿಜ್ಞಾನ (8ನೇ ತರಗತಿ)', titleEn: 'Class 8 General Science Textbook', titleKn: '8ನೇ ತರಗತಿ ವಿಜ್ಞಾನ ಪಠ್ಯಪುಸ್ತಕ', descEn: 'Official Open NCERT textbook covering cell structure, microorganisms, and force.', descKn: '8ನೇ ತರಗತಿ ವಿಜ್ಞಾನ ಅಧಿಕೃತ ಪಠ್ಯಪುಸ್ತಕ.', icon: '🔬', source: 'Open NCERT Textbooks', pdfUrl: 'https://ncert.nic.in/textbook.php' },
+            { id: 9, grade: '8', subjectEn: 'History (Class 8)', subjectKn: 'ಇತಿಹಾಸ (8ನೇ ತರಗತಿ)', titleEn: 'Class 8 Our Pasts - III (History)', titleKn: '8ನೇ ತರಗತಿ ನಮ್ಮ অতীতಗಳು - ಇತಿಹಾಸ', descEn: 'Official Open NCERT textbook covering modern Indian history and colonial rule.', descKn: '8ನೇ ತರಗತಿ ಇತಿಹಾಸ ಅಧಿಕೃತ ಪಠ್ಯಪುಸ್ತಕ.', icon: '📜', source: 'Open NCERT Textbooks', pdfUrl: 'https://ncert.nic.in/textbook.php' },
+
+            // Class 9
+            { id: 10, grade: '9', subjectEn: 'Mathematics (Class 9)', subjectKn: 'ಗಣಿತ (9ನೇ ತರಗತಿ)', titleEn: 'Class 9 Mathematics Textbook', titleKn: '9ನೇ ತರಗತಿ ಗಣಿತ ಪಠ್ಯಪುಸ್ತಕ', descEn: 'Official Open NCERT textbook covering polynomials, geometry, and number systems.', descKn: '9ನೇ ತರಗತಿ ಗಣಿತ ಅಧಿಕೃತ ಪಠ್ಯಪುಸ್ತಕ.', icon: '📊', source: 'Open NCERT Textbooks', pdfUrl: 'https://ncert.nic.in/textbook.php' },
+            { id: 11, grade: '9', subjectEn: 'Science (Class 9)', subjectKn: 'ವಿಜ್ಞಾನ (9ನೇ ತರಗತಿ)', titleEn: 'Class 9 Science Textbook', titleKn: '9ನೇ ತರಗತಿ ವಿಜ್ಞಾನ ಪಠ್ಯಪುಸ್ತಕ', descEn: 'Official Open NCERT textbook covering motion laws, atoms, and tissues.', descKn: '9ನೇ ತರಗತಿ ವಿಜ್ಞಾನ ಅಧಿಕೃತ ಪಠ್ಯಪುಸ್ತಕ.', icon: '⚡', source: 'Open NCERT Textbooks', pdfUrl: 'https://ncert.nic.in/textbook.php' },
+            { id: 12, grade: '9', subjectEn: 'Geography (Class 9)', subjectKn: 'ಭೂಗೋಳ (9ನೇ ತರಗತಿ)', titleEn: 'Class 9 Contemporary India - I (Geography)', titleKn: '9ನೇ ತರಗತಿ ಸಮಕಾಲೀನ ಭಾರತ - ಭೂಗೋಳ', descEn: 'Official Open NCERT textbook covering Indian physical features, drainage, and climate.', descKn: '9ನೇ ತರಗತಿ ಭೂಗೋಳ ಅಧಿಕೃತ ಪಠ್ಯಪುಸ್ತಕ.', icon: '🌍', source: 'Open NCERT Textbooks', pdfUrl: 'https://ncert.nic.in/textbook.php' },
+
+            // Class 10
+            { id: 13, grade: '10', subjectEn: 'Mathematics (Class 10)', subjectKn: 'ಗಣಿತ (10ನೇ ತರಗತಿ)', titleEn: 'Class 10 Mathematics Textbook', titleKn: '10ನೇ ತರಗತಿ ಗಣಿತ ಪಠ್ಯಪುಸ್ತಕ', descEn: 'Official Open NCERT textbook covering quadratic equations, trigonometry, and statistics.', descKn: '10ನೇ ತರಗತಿ ಗಣಿತ ಅಧಿಕೃತ ಪಠ್ಯಪುಸ್ತಕ.', icon: '📐', source: 'Open NCERT Textbooks', pdfUrl: 'https://ncert.nic.in/textbook.php' },
+            { id: 14, grade: '10', subjectEn: 'Science (Class 10)', subjectKn: 'ವಿಜ್ಞಾನ (10ನೇ ತರಗತಿ)', titleEn: 'Class 10 Science Textbook (Physics, Chemistry, Biology)', titleKn: '10ನೇ ತರಗತಿ ವಿಜ್ಞಾನ ಪಠ್ಯಪುಸ್ತಕ', descEn: 'Official Open NCERT textbook covering chemical reactions, light reflection, and electricity.', descKn: '10ನೇ ತರಗತಿ ವಿಜ್ಞಾನ ಅಧಿಕೃತ ಪಠ್ಯಪುಸ್ತಕ.', icon: '💡', source: 'Open NCERT Textbooks', pdfUrl: 'https://ncert.nic.in/textbook.php' },
+            { id: 15, grade: '10', subjectEn: 'Social Science (Class 10)', subjectKn: 'ಸಮಾಜ ವಿಜ್ಞಾನ (10ನೇ ತರಗತಿ)', titleEn: 'Class 10 Social Science Textbook', titleKn: '10ನೇ ತರಗತಿ ಸಮಾಜ ವಿಜ್ಞಾನ ಪಠ್ಯಪುಸ್ತಕ', descEn: 'Official Open NCERT textbook covering nationalism in India, economics, and political science.', descKn: '10ನೇ ತರಗತಿ ಸಮಾಜ ವಿಜ್ಞಾನ ಅಧಿಕೃತ ಪಠ್ಯಪುಸ್ತಕ.', icon: '🏛️', source: 'Open NCERT Textbooks', pdfUrl: 'https://ncert.nic.in/textbook.php' }
+        ];
+
+        // --- NCERT Videos (Grades 6–10 Differentiated) ---
+        const videosData = [
+            { id: 1, grade: '6', subjectEn: 'Class 6 • Science & Maths Videos', subjectKn: '6ನೇ ತರಗತಿ ವೀಡಿಯೊ ಪಾಠಗಳು', titleEn: 'Class 6 Science & Maths Video Lessons', titleKn: '6ನೇ ತರಗತಿ ವಿಜ್ಞಾನ ಮತ್ತು ಗಣಿತ ವೀಡಿಯೊಗಳು', quality: 'PM eVidya', videoUrl: 'https://www.youtube.com/@NCERTOFFICIAL/search?query=Class%206' },
+            { id: 2, grade: '7', subjectEn: 'Class 7 • Science & Maths Videos', subjectKn: '7ನೇ ತರಗತಿ ವೀಡಿಯೊ ಪಾಠಗಳು', titleEn: 'Class 7 NCERT Animated Learning Modules', titleKn: '7ನೇ ತರಗತಿ ಅನಿಮೇಟೆಡ್ ವೀಡಿಯೊಗಳು', quality: 'PM eVidya', videoUrl: 'https://www.youtube.com/@NCERTOFFICIAL/search?query=Class%207' },
+            { id: 3, grade: '8', subjectEn: 'Class 8 • Science & History Videos', subjectKn: '8ನೇ ತರಗತಿ ವೀಡಿಯೊ ಪಾಠಗಳು', titleEn: 'Class 8 Science & Social Science Video Lectures', titleKn: '8ನೇ ತರಗತಿ ವಿಜ್ಞಾನ ಮತ್ತು ಸಮಾಜ ವೀಡಿಯೊಗಳು', quality: 'PM eVidya', videoUrl: 'https://www.youtube.com/@NCERTOFFICIAL/search?query=Class%208' },
+            { id: 4, grade: '9', subjectEn: 'Class 9 • Science & Geography Videos', subjectKn: '9ನೇ ತರಗತಿ ವೀಡಿಯೊ ಪಾಠಗಳು', titleEn: 'Class 9 High School Concepts Video Series', titleKn: '9ನೇ ತರಗತಿ ಪರಿಕಲ್ಪನೆಗಳ ವೀಡಿಯೊಗಳು', quality: 'PM eVidya', videoUrl: 'https://www.youtube.com/@NCERTOFFICIAL/search?query=Class%209' },
+            { id: 5, grade: '10', subjectEn: 'Class 10 • SSLC Board Lectures', subjectKn: '10ನೇ ತರಗತಿ ಬೋರ್ಡ್ ವೀಡಿಯೊಗಳು', titleEn: 'Class 10 Board Exam Revision & Concept Lectures', titleKn: '10ನೇ ತರಗತಿ ಬೋರ್ಡ್ ಪರೀಕ್ಷಾ ವೀಡಿಯೊ ಉಪನ್ಯಾಸಗಳು', quality: 'PM eVidya', videoUrl: 'https://www.youtube.com/@NCERTOFFICIAL/search?query=Class%2010' }
+        ];
+
+        // --- 15-Question Differentiated Quiz Bank For Every Subject & Grade (6-10) ---
+        const quizzesData = [
+            // Class 6 Quizzes
+            {
+                id: 601, grade: '6', subjectEn: 'Science (Class 6)', subjectKn: 'ವಿಜ್ಞಾನ (6ನೇ ತರಗತಿ)',
+                titleEn: 'Class 6 Science: Complete 15-Question Assessment', titleKn: '6ನೇ ತರಗತಿ ವಿಜ್ಞಾನ: ಸಂಪೂರ್ಣ 15 ಪ್ರಶ್ನೆಗಳ ಮೌಲ್ಯಮಾಪನ',
+                questions: [
+                    { questionEn: '1. Which vitamin is essential for maintaining healthy eyesight?', questionKn: '1. ಆರೋಗ್ಯಕರ ದೃಷ್ಟಿಯನ್ನು ಕಾಪಾಡಿಕೊಳ್ಳಲು ಯಾವ ವಿಟಮಿನ್ ಅತ್ಯಗತ್ಯ?', optionsEn: ['Vitamin A', 'Vitamin B', 'Vitamin C', 'Vitamin D'], optionsKn: ['ವಿಟಮಿನ್ ಎ', 'ವಿಟಮಿನ್ ಬಿ', 'ವಿಟಮಿನ್ ಸಿ', 'ವಿಟಮಿನ್ ಡಿ'], answer: 0, explanationEn: 'Vitamin A supports good vision.', explanationKn: 'ವಿಟಮಿನ್ ಎ ಕಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾಪಾಡುತ್ತದೆ.' },
+                    { questionEn: '2. Deficiency of Vitamin C causes which disease?', questionKn: '2. ವಿಟಮಿನ್ ಸಿ ಕೊರತೆಯಿಂದ ಯಾವ ಕಾಯಿಮೆ ಬರುತ್ತದೆ?', optionsEn: ['Beriberi', 'Scurvy', 'Rickets', 'Goitre'], optionsKn: ['ಬೆರಿಬೆರಿ', 'ಸ್ಕರ್ವಿ', 'ರಿಕೆಟ್ಸ್', 'ಗಳಗಂಡ'], answer: 1, explanationEn: 'Scurvy is caused by lack of Vitamin C.', explanationKn: 'ಸ್ಕರ್ವಿ ರೋಗ ಬರುತ್ತದೆ.' },
+                    { questionEn: '3. Which of the following is a root vegetable?', questionKn: '3. ಕೆಳಗಿನವುಗಳಲ್ಲಿ ಯಾವುದು ಬೇರು ತರಕಾರಿ?', optionsEn: ['Potato', 'Carrot', 'Onion', 'Ginger'], optionsKn: ['ಆಲೂಗಡ್ಡೆ', 'ಕ್ಯಾರೆಟ್', 'ಈರುಳ್ಳಿ', 'ಶುಂಠಿ'], answer: 1, explanationEn: 'Carrot is a modified taproot.', explanationKn: 'ಕ್ಯಾರೆಟ್ ಬೇರು ತರಕಾರಿಯಾಗಿದೆ.' },
+                    { questionEn: '4. What is the primary source of energy for living organisms?', questionKn: '4. ಜೀವಿಗಳಿಗೆ ಶಕ್ತಿಯ ಪ್ರಾಥಮಿಕ ಮೂಲ ಯಾವುದು?', optionsEn: ['Sunlight / Carbohydrates', 'Proteins', 'Vitamins', 'Minerals'], optionsKn: ['ಸೂರ್ಯನ ಬೆಳಕು / ಕಾರ್ಬೋಹೈಡ್ರೇಟ್', 'ಪ್ರೋಟೀನ್', 'ವಿಟಮಿನ್', 'ಖನಿಜಗಳು'], answer: 0, explanationEn: 'Carbohydrates provide energy.', explanationKn: 'ಕಾರ್ಬೋಹೈಡ್ರೇಟ್ ಶಕ್ತಿ ನೀಡುತ್ತದೆ.' },
+                    { questionEn: '5. Which gas is released by plants during photosynthesis?', questionKn: '5. ದ್ಯುತಿಸಂಶ್ಲೇಷಣೆಯ ಸಂದರ್ಭದಲ್ಲಿ ಸಸ್ಯಗಳು ಬಿಡುಗಡೆ ಮಾಡುವ ಅನಿಲ ಯಾವುದು?', optionsEn: ['Carbon Dioxide', 'Oxygen', 'Nitrogen', 'Hydrogen'], optionsKn: ['ಕಾರ್ಬನ್ ಡೈಆಕ್ಸೈಡ್', 'ಆಮ್ಜನಕ', 'ಸಾರಜನಕ', 'ಜಲಜನಕ'], answer: 1, explanationEn: 'Plants release oxygen.', explanationKn: 'ಸಸ್ಯಗಳು ಆಮ್ಜನಕ ಬಿಡುಗಡೆ ಮಾಡುತ್ತವೆ.' },
+                    { questionEn: '6. Which part of a banana plant is used as food?', questionKn: '6. ಬಾಳೆ ಗಿಡದ ಯಾವ ಭಾಗವನ್ನು ಆಹಾರವಾಗಿ ಬಳಸಲಾಗುತ್ತದೆ?', optionsEn: ['Flower and fruit', 'Stem only', 'Roots only', 'Seeds only'], optionsKn: ['ಹೂವು ಮತ್ತು ಹಣ್ಣು', 'ಕಾಂಡ ಮಾತ್ರ', 'ಬೇರುಗಳು ಮಾತ್ರ', 'ಬೀಜಗಳು ಮಾತ್ರ'], answer: 0, explanationEn: 'Both flower and fruit are edible.', explanationKn: 'ಹೂವು ಮತ್ತು ಹಣ್ಣು ಎರಡನ್ನೂ ತಿನ್ನಬಹುದು.' },
+                    { questionEn: '7. What is the smallest whole number?', questionKn: '7. ಅತ್ಯಂತ ಚಿಕ್ಕ ಪೂರ್ಣಸಂಖ್ಯೆ ಯಾವುದು?', optionsEn: ['0', '1', '-1', '10'], optionsKn: ['0', '1', '-1', '10'], answer: 0, explanationEn: 'Whole numbers start from 0.', explanationKn: 'ಪೂರ್ಣಸಂಖ್ಯೆಗಳು 0 ರಿಂದ ಪ್ರಾರಂಭವಾಗುತ್ತವೆ.' },
+                    { questionEn: '8. Which of the following is magnetic?', questionKn: '8. ಕೆಳಗಿನವುಗಳಲ್ಲಿ ಯಾವುದು ಕಾಂತೀಯ ವಸ್ತು?', optionsEn: ['Iron', 'Plastic', 'Wood', 'Rubber'], optionsKn: ['ಕಬ್ಬಿಣ', 'ಪ್ಲಾಸ್ಟಿಕ್', 'ಮರ', 'ರಬ್ಬರ್'], answer: 0, explanationEn: 'Iron gets attracted to magnets.', explanationKn: 'ಕಬ್ಬಿಣವು ಕಾಂತಕ್ಕೆ ಆಕರ್ಷಿಸಲ್ಪಡುತ್ತದೆ.' },
+                    { questionEn: '9. Water exists in how many natural states?', questionKn: '9. ನೀರು ಎಷ್ಟು ನೈಸರ್ಗಿಕ ಸ್ಥಿತಿಗಳಲ್ಲಿ ಅಸ್ತಿತ್ವದಲ್ಲಿದೆ?', optionsEn: ['1', '2', '3', '4'], optionsKn: ['1', '2', '3', '4'], answer: 2, explanationEn: 'Solid, liquid, and gas.', explanationKn: 'ಘನ, ದ್ರವ ಮತ್ತು ಅನಿಲ ಸ್ಥಿತಿಗಳು.' },
+                    { questionEn: '10. Which of these is a biotic component?', questionKn: '10. ಇವುಗಳಲ್ಲಿ ಯಾವುದು ಜೈವಿಕ ಘಟಕ?', optionsEn: ['Plant', 'Soil', 'Water', 'Air'], optionsKn: ['ಸಸ್ಯ', 'ಮಣ್ಣು', 'ನೀರು', 'ಗಾಳಿ'], answer: 0, explanationEn: 'Plants are living components.', explanationKn: 'ಸಸ್ಯಗಳು ಜೈವಿಕ ಘಟಕಗಳಾಗಿವೆ.' },
+                    { questionEn: '11. Process of conversion of water vapor into liquid water:', questionKn: '11. ನೀರಾವಿಯು ದ್ರವ ನೀರಾಗುವ ಪ್ರಕ್ರಿಯೆ:', optionsEn: ['Evaporation', 'Condensation', 'Melting', 'Freezing'], optionsKn: ['ಭಾಷ್ಪೀಕರಣ', 'ಸಾಂದ್ರೀಕರಣ', 'ಕರಗುವಿಕೆ', 'ಘನೀಕರಣ'], answer: 1, explanationEn: 'Condensation turns vapor to water.', explanationKn: 'ಇದನ್ನು ಸಾಂದ್ರೀಕರಣ ಎನ್ನಲಾಗುತ್ತದೆ.' },
+                    { questionEn: '12. Which fiber is obtained from silkworms?', questionKn: '12. ರೇಷ್ಮೆ ಹುಳುಗಳಿಂದ ಯಾವ ನಾರನ್ನು ಪಡೆಯಲಾಗುತ್ತದೆ?', optionsEn: ['Cotton', 'Silk', 'Wool', 'Jute'], optionsKn: ['ಹತ್ತಿ', 'ರೇಷ್ಮೆ', 'ಉಣ್ಣೆ', 'ಜನಪ'], answer: 1, explanationEn: 'Silk fibers come from cocoons.', explanationKn: 'ರೇಷ್ಮೆಯನ್ನು ಪಡೆಯಲಾಗುತ್ತದೆ.' },
+                    { questionEn: '13. Separation of salt from seawater is done by:', questionKn: '13. ಸಮುದ್ರದ ನೀರಿನಿಂದ ಉಪ್ಪು ಬೇರ್ಪಡಿಸುವ ವಿಧಾನ:', optionsEn: ['Filtration', 'Evaporation', 'Sedimentation', 'Decantation'], optionsKn: ['ಶೋಧನೆ', 'ಭಾಷ್ಪೀಕರಣ', 'ಅವಕ್ಷೇಪನ', 'ಬೇರ್ಪಡಿಸುವಿಕೆ'], answer: 1, explanationEn: 'Water evaporates leaving salt.', explanationKn: 'ಭಾಷ್ಪೀಕರಣದ ಮೂಲಕ ಉಪ್ಪು ಉಳಿಯುತ್ತದೆ.' },
+                    { questionEn: '14. Joints in our bones help in:', questionKn: '14. ಮೂಳೆಗಳ ಕೀಲುಗಳು ಯಾವುದಕ್ಕೆ ಸಹಾಯ ಮಾಡುತ್ತವೆ?', optionsEn: ['Movement', 'Breathing', 'Digestion', 'Vision'], optionsKn: ['ಚಲನೆ', 'ಉಸಿರಾಟ', 'ಜೀರ್ಣಕ್ರಿಯೆ', 'ದೃಷ್ಟಿ'], answer: 0, explanationEn: 'Joints allow skeletal movement.', explanationKn: 'ಕೀಲುಗಳು ಚಲನೆಗೆ ಸಹಾಯ ಮಾಡುತ್ತವೆ.' },
+                    { questionEn: '15. Which direction does a freely suspended magnet point?', questionKn: '15. ಮುಕ್ತವಾಗಿ ನೇತುಹಾಕಿರುವ ಕಾಂತವು ಯಾವ ದಿಕ್ಕನ್ನು ಸೂಚಿಸುತ್ತದೆ?', optionsEn: ['East-West', 'North-South', 'Up-Down', 'Any direction'], optionsKn: ['ಪೂರ್ವ-ಪಶ್ಚಿಮ', 'ಉತ್ತರ-ದಕ್ಷಿಣ', 'ಮೇಲೆ-ಕೆಳಗೆ', 'ಯಾವುದೇ ದಿಕ್ಕು'], answer: 1, explanationEn: 'Magnets align North-South.', explanationKn: 'ಉತ್ತರ-ದಕ್ಷಿಣ ದಿಕ್ಕನ್ನು ಸೂಚಿಸುತ್ತದೆ.' }
+                ]
+            },
+            {
+                id: 602, grade: '6', subjectEn: 'Mathematics (Class 6)', subjectKn: 'ಗಣಿತ (6ನೇ ತರಗತಿ)',
+                titleEn: 'Class 6 Mathematics: Complete 15-Question Assessment', titleKn: '6ನೇ ತರಗತಿ ಗಣಿತ: ಸಂಪೂರ್ಣ 15 ಪ್ರಶ್ನೆಗಳ ಮೌಲ್ಯಮಾಪನ',
+                questions: [
+                    { questionEn: '1. Which is the greatest 5-digit number?', questionKn: '1. ಅತ್ಯಂತ ದೊಡ್ಡ 5 ಅಂಕಿಯ ಸಂಖ್ಯೆ ಯಾವುದು?', optionsEn: ['10000', '99999', '90000', '99990'], optionsKn: ['10000', '99999', '90000', '99990'], answer: 1, explanationEn: '99,999 is the greatest 5-digit number.', explanationKn: '99999 ದೊಡ್ಡ 5 ಅಂಕಿಯ ಸಂಖ್ಯೆಯಾಗಿದೆ.' },
+                    { questionEn: '2. Estimated value of 730 + 998 to nearest hundreds:', questionKn: '2. 730 + 998 ರ ಅಂದಾಜು ಮೊತ್ತ (ನೂರಕ್ಕೆ):', optionsEn: ['1700', '1800', '1600', '1750'], optionsKn: ['1700', '1800', '1600', '1750'], answer: 0, explanationEn: '700 + 1000 = 1700.', explanationKn: '700 + 1000 = 1700 ಆಗುತ್ತದೆ.' },
+                    { questionEn: '3. Roman numeral for 50 is:', questionKn: '3. 50 ರ ರೋಮನ್ ಸಂಖ್ಯೆ ಏನು?', optionsEn: ['X', 'L', 'C', 'D'], optionsKn: ['X', 'L', 'C', 'D'], answer: 1, explanationEn: 'L represents 50 in Roman numerals.', explanationKn: 'L ಎಂದರೆ 50.' },
+                    { questionEn: '4. The smallest prime number is:', questionKn: '4. ಅತ್ಯಂತ ಚಿಕ್ಕ ಅವಿಭಾಜ್ಯ ಸಂಖ್ಯೆ (Prime) ಯಾವುದು?', optionsEn: ['0', '1', '2', '3'], optionsKn: ['0', '1', '2', '3'], answer: 2, explanationEn: '2 is the smallest and only even prime number.', explanationKn: '2 ಅತ್ಯಂತ ಚಿಕ್ಕ ಅವಿಭಾಜ್ಯ ಸಂಖ್ಯೆ.' },
+                    { questionEn: '5. HCF of two consecutive numbers is always:', questionKn: '5. ಎರಡು ಅನುಕ್ರಮ ಸಂಖ್ಯೆಗಳ ಮ.ಸಾ.ಅ ಯಾವಾಗಲೂ:', optionsEn: ['0', '1', '2', 'Depends'], optionsKn: ['0', '1', '2', 'ನಿರ್ಧರಿಸಲಾಗದು'], answer: 1, explanationEn: 'Consecutive numbers share no common factor other than 1.', explanationKn: 'ಅನುಕ್ರಮ ಸಂಖ್ಯೆಗಳ ಮ.ಸಾ.ಅ 1 ಆಗಿರುತ್ತದೆ.' },
+                    { questionEn: '6. A polygon with 3 sides is called:', questionKn: '6. 3 ಬಾುಗಳನ್ನು ಹೊಂದಿರುವ ಬಹುಭುಜಾಕೃತಿ:', optionsEn: ['Square', 'Triangle', 'Rectangle', 'Pentagon'], optionsKn: ['ಚೌಕ', 'ತ್ರಿಭುಜ', 'ಆಯತ', 'ಪಂಚಭುಜ'], answer: 1, explanationEn: 'A 3-sided polygon is a triangle.', explanationKn: '3 ಬಾುಗಳಿರುವ ಆಕೃತಿ ತ್ರಿಭುಜ.' },
+                    { questionEn: '7. How many degrees are in a straight angle?', questionKn: '7. ಸರಳ ಕೋನದ ಅಳತೆ ಎಷ್ಟು ಡಿಗ್ರಿ?', optionsEn: ['90°', '180°', '360°', '45°'], optionsKn: ['90°', '180°', '360°', '45°'], answer: 1, explanationEn: 'A straight angle measures 180°.', explanationKn: 'ಸರಳ ಕೋನವು 180° ಹೊಂದಿರುತ್ತದೆ.' },
+                    { questionEn: '8. Absolute value of -15 is:', questionKn: '8. -15 ರ ಪರಮ ಮೌಲ್ಯ (Absolute Value):', optionsEn: ['-15', '15', '0', '1'], optionsKn: ['-15', '15', '0', '1'], answer: 1, explanationEn: 'Absolute value is always positive: |-15| = 15.', explanationKn: 'ಪರಮ ಮೌಲ್ಯವು ಯಾವಾಗಲೂ ಧನಾತ್ಮಕವಾಗಿರುತ್ತದೆ.' },
+                    { questionEn: '9. Which fraction is equivalent to 2/3?', questionKn: '9. 2/3 ಗೆ ಸಮನಾದ ಭಿನ್ನರಾಶಿ ಯಾವುದು?', optionsEn: ['4/6', '3/4', '5/7', '1/3'], optionsKn: ['4/6', '3/4', '5/7', '1/3'], answer: 0, explanationEn: 'Multiplying numerator and denominator by 2 gives 4/6.', explanationKn: '4/6 ಸಮನಾದ ಭಿನ್ನರಾಶಿ.' },
+                    { questionEn: '10. Perimeter of a square with side 5 cm is:', questionKn: '10. 5 ಸೆಂ.ಮೀ ಬಾುಯಿರುವ ಚೌಕದ ಸುತ್ತಳತೆ:', optionsEn: ['10 cm', '20 cm', '25 cm', '15 cm'], optionsKn: ['10 ಸೆಂ.ಮೀ', '20 ಸೆಂ.ಮೀ', '25 ಸೆಂ.ಮೀ', '15 ಸೆಂ.ಮೀ'], answer: 1, explanationEn: 'Perimeter = 4 × side = 4 × 5 = 20 cm.', explanationKn: 'ಸುತ್ತಳತೆ = 4 × 5 = 20 ಸೆಂ.ಮೀ.' },
+                    { questionEn: '11. Write 0.05 as a fraction in simplest form:', questionKn: '11. 0.05 ಅನ್ನು ಸರಳ ರೂಪದ ಭಿನ್ನರಾಶಿಯಲ್ಲಿ ಬರೆಯಿರಿ:', optionsEn: ['1/20', '1/10', '5/10', '1/5'], optionsKn: ['1/20', '1/10', '5/10', '1/5'], answer: 0, explanationEn: '5/100 simplifies to 1/20.', explanationKn: 'ಸರಳ ರೂಪ 1/20 ಆಗುತ್ತದೆ.' },
+                    { questionEn: '12. Number of lines of symmetry in a regular hexagon:', questionKn: '12. ನಿಯಮಿತ ಷಡ್ಭುಜಾಕೃತಿಯ (Hexagon) ಸಮ್ಮಿತಿ ರೇಖೆಗಳು:', optionsEn: ['4', '5', '6', '8'], optionsKn: ['4', '5', '6', '8'], answer: 2, explanationEn: 'A regular hexagon has 6 lines of symmetry.', explanationKn: 'ಷಡ್ಭುಜಾಕೃತಿಯಲ್ಲಿ 6 ಸಮ್ಮಿತಿ ರೇಖೆಗಳಿವೆ.' },
+                    { questionEn: '13. Ratio of 50 paise to ₹1 is:', questionKn: '13. 50 ಪೈಸೆಯು 1 ರೂಪಾಯಿಗೆ ಹೊಂದಿರುವ ಅನುಪಾತ:', optionsEn: ['1:2', '2:1', '1:1', '1:5'], optionsKn: ['1:2', '2:1', '1:1', '1:5'], answer: 0, explanationEn: '₹1 = 100 paise, so 50:100 = 1:2.', explanationKn: '50/100 = 1:2 ಅನುಪಾತ.' },
+                    { questionEn: '14. If cost of 1 pen is ₹15, cost of 4 pens is:', questionKn: '14. 1 ಪೆನ್ ಬೆಲೆ ₹15 ಆದರೆ, 4 ಪೆನ್‌ಗಳ ಬೆಲೆ:', optionsEn: ['₹45', '₹60', '₹75', '₹30'], optionsKn: ['₹45', '₹60', '₹75', '₹30'], answer: 1, explanationEn: '15 × 4 = ₹60.', explanationKn: '15 × 4 = ₹60 ಆಗುತ್ತದೆ.' },
+                    { questionEn: '15. Which is an algebraic expression?', questionKn: '15. ಕೆಳಗಿನವುಗಳಲ್ಲಿ ಯಾವುದು ಬೀಜಗಣಿತದ ವ್ಯಕ್ತK (Expression)?', optionsEn: ['4 + 5 = 9', '2x + 3', '10 > 5', '7 - 2 = 5'], optionsKn: ['4 + 5 = 9', '2x + 3', '10 > 5', '7 - 2 = 5'], answer: 1, explanationEn: '2x + 3 contains variables and constants.', explanationKn: '2x + 3 ಚರಾಕ್ಷರಗಳನ್ನು ಹೊಂದಿದೆ.' }
+                ]
+            },
+
+            // Class 7 Quizzes
+            {
+                id: 701, grade: '7', subjectEn: 'Science (Class 7)', subjectKn: 'ವಿಜ್ಞಾನ (7ನೇ ತರಗತಿ)',
+                titleEn: 'Class 7 Science: Complete 15-Question Assessment', titleKn: '7ನೇ ತರಗತಿ ವಿಜ್ಞಾನ: ಸಂಪೂರ್ಣ 15 ಪ್ರಶ್ನೆಗಳ ಮೌಲ್ಯಮಾಪನ',
+                questions: [
+                    { questionEn: '1. Mode of nutrition in green plants is:', questionKn: '1. ಹಸಿರು ಸಸ್ಯಗಳಲ್ಲಿನ ಪೋಷಣೆಯ ವಿಧಾನ:', optionsEn: ['Autotrophic', 'Heterotrophic', 'Parasitic', 'Saprotrophic'], optionsKn: ['ಸ್ವಪೋಷಣೆ (Autotrophic)', 'ಪರಪೋಷಣೆ', 'ಪರಾವಲಂಬಿ', 'ಮೃತೋಪಜೀವಿ'], answer: 0, explanationEn: 'Green plants make their own food (autotrophic).', explanationKn: 'ಹಸಿರು ಸಸ್ಯಗಳು ಸ್ವಪೋಷಕಗಳಾಗಿವೆ.' },
+                    { questionEn: '2. The finger-like outgrowths in the inner walls of small intestine are:', questionKn: '2. ಸಣ್ಣ ಕರುಳಿನ ಒಳ ಗೋಡೆಗಳಲ್ಲಿರುವ ಬೆರಳಿನಂತಹ ರಚನೆಗಳು:', optionsEn: ['Villi', 'Pseudopodia', 'Cilia', 'Bile'], optionsKn: ['ವಿಲ್ಲೈ (Villi)', 'ಸ್ಯೂಡೋಪೋಡಿಯಾ', 'ಸೀಲಿಯಾ', 'ಪಿತ್ತರಸ'], answer: 0, explanationEn: 'Villi increase surface area for absorption.', explanationKn: 'ವಿಲ್ಲೈಗಳು ಹೀರಿಕೊಳ್ಳುವ ಮೇಲ್ಮೈ ವಿಸ್ತೀರ್ಣ ಹೆಚ್ಚಿಸುತ್ತವೆ.' },
+                    { questionEn: '3. Chemical nature of soap solution is:', questionKn: '3. ಸೋಪು ನೀರಿನ ರಾಸಾಯನಿಕ ಸ್ವಭಾವ:', optionsEn: ['Acidic', 'Basic', 'Neutral', 'Salt'], optionsKn: ['ಆಮ್ಲೀಯ', 'ಪ್ರತ್ಯಾಮ್ಲೀಯ (Basic)', 'ತಟಸ್ಥ', 'ಉಪ್ಪು'], answer: 1, explanationEn: 'Soaps are basic and turn red litmus blue.', explanationKn: 'ಸೋಪು ಪ್ರತ್ಯಾಮ್ಲೀಯ ಸ್ವಭಾವ ಹೊಂದಿದೆ.' },
+                    { questionEn: '4. Normal temperature of a healthy human body is:', questionKn: '4. ಆರೋಗ್ಯಕರ ಮಾನವ ದೇಹದ ಸಾಮಾನ್ಯ ಉಷ್ಣತೆ:', optionsEn: ['37°C', '98.6°C', '100°C', '30°C'], optionsKn: ['37°C', '98.6°C', '100°C', '30°C'], answer: 0, explanationEn: 'Normal body temperature is 37°C (or 98.6°F).', explanationKn: 'ಸಾಮಾನ್ಯ ಉಷ್ಣತೆ 37°C ಆಗಿದೆ.' },
+                    { questionEn: '5. Winds are generated due to:', questionKn: '5. ಗಾಳಿಯು ಉಂಟಾಗಲು ಕಾರಣ:', optionsEn: ['Uneven heating on Earth', 'Rotation only', 'Moon gravity', 'Water currents'], optionsKn: ['ಭೂಮಿಯ ಮೇಲಿನ ಅಸಮಾನ ಉಷ್ಣತೆ', 'ಭ್ರಮಣ ಮಾತ್ರ', 'ಚಂದ್ರನ ಗುರುತ್ವಾಕರ್ಷಣೆ', 'ಜಲ ಪ್ರವಾಹ'], answer: 0, explanationEn: 'Uneven heating generates wind currents.', explanationKn: 'ಭೂಮಿಯ ಅಸಮಾನ ಉಷ್ಣತೆಯಿಂದ ಗಾಳಿ ಬೀಸುತ್ತದೆ.' },
+                    { questionEn: '6. The liquid part of blood is called:', questionKn: '6. ರಕ್ತದ ದ್ರವ ಭಾಗವನ್ನು ಏನೆಂದು ಕರೆಯುತ್ತಾರೆ?', optionsEn: ['RBC', 'WBC', 'Plasma', 'Platelets'], optionsKn: ['RBC', 'WBC', 'ಪ್ಲಾಸ್ಮಾ (Plasma)', 'ಪ್ಲೇಟ್‌ಲೆಟ್‌ಗಳು'], answer: 2, explanationEn: 'Plasma is the fluid matrix of blood.', explanationKn: 'ರಕ್ತದ ದ್ರವ ಭಾಗವೇ ಪ್ಲಾಸ್ಮಾ.' },
+                    { questionEn: '7. Reproductive part of a plant is the:', questionKn: '7. ಸಸ್ಯದ ಸಂತಾನೋತ್ಪತ್ತಿ ಅಂಗ ಯಾವುದು?', optionsEn: ['Root', 'Stem', 'Leaf', 'Flower'], optionsKn: ['ಬೇರು', 'ಕಾಂಡ', 'ಎಲೆ', 'ಹೂವು (Flower)'], answer: 3, explanationEn: 'Flowers contain reproductive organs.', explanationKn: 'ಹೂವು ಸಂತಾನೋತ್ಪತ್ತಿ ಅಂಗವಾಗಿದೆ.' },
+                    { questionEn: '8. Time period of a simple pendulum depends on its:', questionKn: '8. ಸರಳ ಲೋಲಕದ ಆವರ್ತಕ ಕಾಲವು ಯಾವುದರ ಮೇಲೆ ಅವಲಂಬಿತವಾಗಿದೆ?', optionsEn: ['Length', 'Mass of bob', 'Color', 'Amplitude'], optionsKn: ['ಉದ್ದ (Length)', 'ಲೋಲಕದ ದ್ರವ್ಯರಾಶಿ', 'ಬಣ್ಣ', 'ವಿಸ್ತಾರ'], answer: 0, explanationEn: 'Time period depends on string length.', explanationKn: 'ಇದು ಲೋಲಕದ ಉದ್ದದ ಮೇಲೆ ಅವಲಂಬಿತವಾಗಿದೆ.' },
+                    { questionEn: '9. Filament of an electric bulb is made of:', questionKn: '9. ವಿದ್ಯುತ್ ಬಲ್ಬ್‌ನ ತಂತು (Filament) ಯಾವುದರಿಂದ ಮಾಡಲ್ಪಟ್ಟಿದೆ?', optionsEn: ['Copper', 'Iron', 'Tungsten', 'Aluminum'], optionsKn: ['ತಾಮ್ರ', 'ಕಬ್ಬಿಣ', 'ಟಂಗ್ಸ್ಟನ್ (Tungsten)', 'ಅಲ್ಯೂಮಿನಿಯಂ'], answer: 2, explanationEn: 'Tungsten has a very high melting point.', explanationKn: 'ಟಂಗ್ಸ್ಟನ್ ಹೆಚ್ಚಿನ ಕರಗುವ ಬಿಂದು ಹೊಂದಿದೆ.' },
+                    { questionEn: '10. Image formed by a plane mirror is always:', questionKn: '10. ಸಮತಲ ದರ್ಪಣದಿಂದ ಉಂಟಾಗುವ ಪ್ರತಿಬಿಂಬವು ಯಾವಾಗಲೂ:', optionsEn: ['Real and inverted', 'Virtual and erect', 'Real and erect', 'Magnified'], optionsKn: ['ವಾಸ್ತವ ಮತ್ತು ತಲೆಕೆಳಗಾದ', 'ಮಿಥ್ಯ ಮತ್ತು ನೇರ (Virtual and erect)', 'ವಾಸ್ತವ ಮತ್ತು ನೇರ', 'ದೊಡ್ಡದಾದ'], answer: 1, explanationEn: 'Plane mirrors form virtual, erect images of same size.', explanationKn: 'ಇದು ಮಿಥ್ಯ ಮತ್ತು ನೇರವಾದ ಪ್ರತಿಬಿಂಬ ನೀಡುತ್ತದೆ.' },
+                    { questionEn: '11. Fresh water available on Earth is roughly:', questionKn: '11. ಭೂಮಿ ಮೇಲಿರುವ ಕುಡಿಯುವ ಶುದ್ಧ ನೀರಿನ ಪ್ರಮಾಣ தோராயமாக:', optionsEn: ['97%', '2.5%', '50%', '10%'], optionsKn: ['97%', '2.5%', '50%', '10%'], answer: 1, explanationEn: 'Only about 2.5% to 3% of Earth water is freshwater.', explanationKn: 'ಸುಮಾರು 2.5% ಮಾತ್ರ ಶುದ್ಧ ನೀರಿದೆ.' },
+                    { questionEn: '12. Forests act as a natural:', questionKn: '12. ಅರಣ್ಯಗಳು ನೈಸರ್ಗಿಕವಾಗಿ ಹೀಗೆ ವರ್ತಿಸುತ್ತವೆ:', optionsEn: ['Air purifier and sponge', 'Heat trap', 'Desert creator', 'Flood maker'], optionsKn: ['ಗಾಳಿ ಶುದ್ಧೀಕಾರಿ ಮತ್ತು ಸ್ಪಂಜು', 'ಶಾಖ ಸೆರೆಹಿಡಿಯುವಿಕೆ', 'ಮರುಭೂಮಿ ಸೃಷ್ಟಿಕರ್ತ', 'ಪ್ರವಾಹ ಸೃಷ್ಟಿಕರ್ತ'], answer: 0, explanationEn: 'Forests purify air and absorb rainwater.', explanationKn: 'ಅರಣ್ಯಗಳು ಗಾಳಿ ಶುದ್ಧೀಕರಿಸುತ್ತವೆ.' },
+                    { questionEn: '13. Wastewater released from homes is called:', questionKn: '13. ಮನೆಗಳಿಂದ ಬಿಡುಗಡೆಯಾಗುವ ಕಲುಷಿತ ನೀರನ್ನು ಏನೆಂದು ಕರೆಯುತ್ತಾರೆ?', optionsEn: ['Sludge', 'Sewage', 'Aquifer', 'Potable water'], optionsKn: ['ಸ್ಲಡ್ಜ್', 'ಚರಂಡಿ ನೀರು (Sewage)', 'ಜಲಚರ', 'ಕುಡಿಯುವ ನೀರು'], answer: 1, explanationEn: 'Sewage is liquid waste.', explanationKn: 'ಇದನ್ನು ಚರಂಡಿ ನೀರು ಅಥವಾ ಒಳಚರಂಡಿ ಎನ್ನಲಾಗುತ್ತದೆ.' },
+                    { questionEn: '14. Breathing rate in adult human at rest per minute is:', questionKn: '14. ವಿಶ್ರಾಂತಿ ಸಮಯದಲ್ಲಿ ವಯಸ್ಕ ಮಾನವನ ನಿಮಿಷದ ಉಸಿರಾಟದ ಪ್ರಮಾಣ:', optionsEn: ['5-8 times', '15-18 times', '30-40 times', '50-60 times'], optionsKn: ['5-8 ಬಾರಿ', '15-18 ಬಾರಿ', '30-40 ಬಾರಿ', '50-60 ಬಾರಿ'], answer: 1, explanationEn: 'Normal resting breathing rate is 15-18 per minute.', explanationKn: 'ನಿಮಿಷಕ್ಕೆ 15-18 ಬಾರಿ ಉಸಿರಾಡುತ್ತಾರೆ.' },
+                    { questionEn: '15. Which acid is present in ant sting?', questionKn: '15. ಇರುವೆ ಕಡಿತದಲ್ಲಿ ಯಾವ ಆಮ್ಲವಿರುತ್ತದೆ?', optionsEn: ['Acetic acid', 'Formic acid (Methanoic acid)', 'Citric acid', 'Lactic acid'], optionsKn: ['ಅಸಿಟಿಕ್ ಆಮ್ಲ', 'ಫಾರ್ಮಿಕ್ ಆಮ್ಲ (ಮೆಥನೋಯಿಕ್ ಆಮ್ಲ)', 'ಸಿಟ್ರಿಕ್ ಆಮ್ಲ', 'ಲ್ಯಾಕ್ಟಿಕ್ ಆಮ್ಲ'], answer: 1, explanationEn: 'Ant stings inject formic acid causing irritation.', explanationKn: 'ಇರುವೆ ಕಡಿತದಲ್ಲಿ ಫಾರ್ಮಿಕ್ ಆಮ್ಲವಿರುತ್ತದೆ.' }
+                ]
+            },
+
+            // Class 8 Quizzes
+            {
+                id: 801, grade: '8', subjectEn: 'Science (Class 8)', subjectKn: 'ವಿಜ್ಞಾನ (8ನೇ ತರಗತಿ)',
+                titleEn: 'Class 8 Science: Complete 15-Question Assessment', titleKn: '8ನೇ ತರಗತಿ ವಿಜ್ಞಾನ: ಸಂಪೂರ್ಣ 15 ಪ್ರಶ್ನೆಗಳ ಮೌಲ್ಯಮಾಪನ',
+                questions: [
+                    { questionEn: '1. Microorganisms that fix nitrogen in leguminous plants roots:', questionKn: '1. ದ್ವಿದಳ ಧಾನ್ಯಗಳ ಬೇರುಗಳಲ್ಲಿ ಸಾರಜನಕ ಸ್ಥಿರೀಕರಣ ಮಾಡುವ ಸೂಕ್ಷ್ಮಾಣುಜೀವಿ:', optionsEn: ['Lactobacillus', 'Rhizobium', 'Yeast', 'Penicillin'], optionsKn: ['ಲ್ಯಾಕ್ಟೋಬಾಸಿಲಸ್', 'ರೈಜೋಬಿಯಂ (Rhizobium)', 'ಈಸ್ಟ್', 'ಪೆನ್ಸಿಲಿನ್'], answer: 1, explanationEn: 'Rhizobium bacteria live in root nodules.', explanationKn: 'ರೈಜೋಬಿಯಂ ಬ್ಯಾಕ್ಟೀರಿಯಾ ಸಾರಜನಕ ಸ್ಥಿರೀಕರಿಸುತ್ತದೆ.' },
+                    { questionEn: '2. Synthetic fiber known as artificial silk is:', questionKn: '2. ಕೃತಕ ರೇಷ್ಮೆ ಎಂದು ಕರೆಯಲ್ಪಡುವ ಕೃತಕ ನಾರು:', optionsEn: ['Nylon', 'Rayon', 'Polyester', 'Acrylic'], optionsKn: ['ನೈಲಾನ್', 'ರೇಯಾನ್ (Rayon)', 'ಪಾಲಿಎಸ್ಟರ್', 'ಅಕ್ರಿಲಿಕ್'], answer: 1, explanationEn: 'Rayon is prepared from wood pulp cellulose.', explanationKn: 'ರೇಯಾನ್ ಅನ್ನು ಕೃತಕ ರೇಷ್ಮೆ ಎನ್ನಲಾಗುತ್ತದೆ.' },
+                    { questionEn: '3. Which non-metal is liquid at room temperature?', questionKn: '3. ಕೊಠಡಿಯ ತಾಪಮಾನದಲ್ಲಿ ದ್ರವವಾಗಿರುವ ಅಲೋಹ ಯಾವುದು?', optionsEn: ['Carbon', 'Bromine', 'Iodine', 'Sulfur'], optionsKn: ['ಕಾರ್ಬನ್', 'ಬ್ರೋಮಿನ್ (Bromine)', 'ಅಯೋಡಿನ್', 'ಸಲ್ಫರ್'], answer: 1, explanationEn: 'Bromine is the only liquid non-metal.', explanationKn: 'ಬ್ರೋಮಿನ್ ಏಕೈಕ ದ್ರವ ಅಲೋಹ.' },
+                    { questionEn: '4. The lowest temperature at which a substance catches fire is:', questionKn: '4. ವಸ್ತುವು ಬೆಂಕಿಹತ್ತಿಕೊಳ್ಳುವ ಕನಿಷ್ಠ ಉಷ್ಣತೆಯನ್ನು ಏನೆಂದು ಕರೆಯುತ್ತಾರೆ?', optionsEn: ['Boiling point', 'Ignition temperature', 'Melting point', 'Room temperature'], optionsKn: ['ಕುದಿಬಿಂದು', 'ಉತ್ತುಪದನ ಉಷ್ಣತೆ / ದಹನೋತ್ಪಾದನಾ ಉಷ್ಣತೆ (Ignition temperature)', 'ಕರಗುವ ಬಿಂದು', 'ಕೊಠಡಿ ಉಷ್ಣತೆ'], answer: 1, explanationEn: 'Ignition temperature is the minimum fire-catching point.', explanationKn: 'ಇದನ್ನು ದಹನೋತ್ಪಾದನಾ ಉಷ್ಣತೆ ಎನ್ನಲಾಗುತ್ತದೆ.' },
+                    { questionEn: '5. Red Data Book keeps record of:', questionKn: '5. ರೆಡ್ ಡೇಟಾ ಬುಕ್ (Red Data Book) ಯಾವುದರ ದಾಖಲೆಯನ್ನು ಇಡುತ್ತದೆ?', optionsEn: ['Extinct species only', 'Endangered species', 'Weather patterns', 'Crop yields'], optionsKn: ['ಅಳಿದುಹೋದ ಜೀವಿಗಳು ಮಾತ್ರ', 'ಅಪಾಯದಲ್ಲಿರುವ ಜೀವಿಗಳು (Endangered)', 'ಹವಾಮಾನ ವೈಪರೀತ್ಯ', 'ಬೆಳೆ ಇಳುವರಿ'], answer: 1, explanationEn: 'It records endangered plants and animals.', explanationKn: 'ಅಪಾಯದಲ್ಲಿರುವ ಪ್ರಭೇದಗಳ ದಾಖಲೆ ಇದು.' },
+                    { questionEn: '6. Powerhouse of the cell is:', questionKn: '6. ಜೀವಕೋಶದ ಶಕ್ತಿ ಕೇಂದ್ರ ಯಾವುದು?', optionsEn: ['Nucleus', 'Mitochondria', 'Vacuole', 'Golgi body'], optionsKn: ['ನ್ಯೂಕ್ಲಿಯಸ್', 'ಮೈಟೋಕಾಂಡ್ರಿಯಾ (Mitochondria)', 'ನಿರ್ವಾತಕೋಶ', 'ಗಾಲ್ಗಿ ಕಾಯಗಳು'], answer: 1, explanationEn: 'Mitochondria produce ATP energy.', explanationKn: 'ಮೈಟೋಕಾಂಡ್ರಿಯಾ ಶಕ್ತಿ ಉತ್ಪಾದಿಸುತ್ತದೆ.' },
+                    { questionEn: '7. Tadpole transforms into adult frog through:', questionKn: '7. ದಪ್ಪತಲೆ ಮೀನು (Tadpole) ಕಪ್ಪೆಯಾಗಲು ನಡೆಯುವ ಪ್ರಕ್ರಿಯೆ:', optionsEn: ['Metamorphosis', 'Budding', 'Binary fission', 'Fertilization'], optionsKn: ['ರೂಪಾಂತರ / ಮೆಟಾಮಾರ್ಫೋಸಿಸ್ (Metamorphosis)', 'ಮೊಗ್ಗೂಡುವಿಕೆ', 'ದ್ವಿಭಜನೆ', 'ಫಲೀಕರಣ'], answer: 0, explanationEn: 'Metamorphosis is drastic developmental change.', explanationKn: 'ಇದನ್ನು ರೂಪಾಂತರ ಎನ್ನಲಾಗುತ್ತದೆ.' },
+                    { questionEn: '8. Pressure is equal to:', questionKn: '8. ಒತ್ತಡ (Pressure) ಎಂದರೆ:', optionsEn: ['Force × Area', 'Force / Area', 'Area / Force', 'Mass × Gravity'], optionsKn: ['ಬಲ × ವಿಸ್ತೀರ್ಣ', 'ಬಲ / ವಿಸ್ತೀರ್ಣ (Force / Area)', 'ವಿಸ್ತೀರ್ಣ / ಬಲ', 'ದ್ರವ್ಯರಾಶಿ × ಗುರುತ್ವ'], answer: 1, explanationEn: 'Pressure = Force divided by Area.', explanationKn: 'ಒತ್ತಡ = ಬಲ / ವಿಸ್ತೀರ್ಣ.' },
+                    { questionEn: '9. SI unit of frequency is:', questionKn: '9. ಆವರ್ತಸಂಖ್ಯೆಯ (Frequency) SI ಏಕಮಾನ:', optionsEn: ['Second', 'Hertz', 'Meter', 'Pascal'], optionsKn: ['ಸೆಕೆಂಡ್', 'ಹರ್ಟ್ಸ್ (Hertz)', 'ಮೀಟರ್', 'ಪಾಸ್ಕಲ್'], answer: 1, explanationEn: 'Frequency is measured in Hertz (Hz).', explanationKn: 'ಆವರ್ತಸಂಖ್ಯೆಯನ್ನು ಹರ್ಟ್ಸ್‌ನಲ್ಲಿ ಅಳೆಯಲಾಗುತ್ತದೆ.' },
+                    { questionEn: '10. Unwanted sound is called:', questionKn: '10. ಅನಪೇಕ್ಷಿತ ಶಬ್ದವನ್ನು ಏನೆಂದು ಕರೆಯುತ್ತಾರೆ?', optionsEn: ['Music', 'Noise', 'Pitch', 'Vibration'], optionsKn: ['ಸಂಗೀತ', 'ಶಬ್ಧ / ಗದ್ದಲ (Noise)', 'ಪಿಚ್', 'ಕಂಪನ'], answer: 1, explanationEn: 'Noise is unpleasant sound.', explanationKn: 'ಇದನ್ನು ಶಬ್ದಮಾಲಿನ್ಯ ಅಥವಾ ಗದ್ದಲ ಎನ್ನಲಾಗುತ್ತದೆ.' },
+                    { questionEn: '11. Electric current can produce:', questionKn: '11. ವಿದ್ಯುತ್ ಪ್ರವಾಹವು ಇವುಗಳನ್ನು ಉಂಟುಮಾಡಬಹುದು:', optionsEn: ['Magnetic effect', 'Heating effect', 'Chemical effect', 'All of the above'], optionsKn: ['ಕಾಂತೀಯ ಪರಿಣಾಮ', 'ಉಷ್ಣ ಪರಿಣಾಮ', 'ರಾಸಾಯನಿಕ ಪರಿಣಾಮ', 'ಮೇಲಿನ ಎಲ್ಲವೂ (All of the above)'], answer: 3, explanationEn: 'Current has magnetic, heating, and chemical effects.', explanationKn: 'ವಿದ್ಯುತ್ ಪ್ರವಾಹವು ಎಲ್ಲ ಪರಿಣಾಮಗಳನ್ನು ಬೀರುತ್ತದೆ.' },
+                    { questionEn: '12. Process of depositing a layer of desired metal on another material using electricity:', questionKn: '12. ವಿದ್ಯುತ್ ಬಳಸಿ ಒಂದು ಲೋಹದ ಮೇಲೆ ಮತ್ತೊಂದು ಲೋಹದ ಲೇಪನ ಮಾಡುವ ವಿಧಾನ:', optionsEn: ['Electroplating', 'Galvanizing', 'Refining', 'Reduction'], optionsKn: ['ಎಲೆಕ್ಟ್ರೋಪ್ಲೇಟಿಂಗ್ / ವಿದ್ಯುತ್ ಲೇಪನ (Electroplating)', 'ಗೆಲ್ವನೈಸಿಂಗ್', 'ಶುದ್ಧೀಕರಣ', 'اختزال'], answer: 0, explanationEn: 'Electroplating coats metals protectively.', explanationKn: 'ಇದನ್ನು ವಿದ್ಯುತ್ ಲೇಪನ ಎನ್ನಲಾಗುತ್ತದೆ.' },
+                    { questionEn: '13. Shaking of Earth crust is called:', questionKn: '13. ಭೂಮಿಯ ಮೇಲ್ಮೈ ಕಂಪಿಸುವುದನ್ನು ಏನೆಂದು ಕರೆಯುತ್ತಾರೆ?', optionsEn: ['Volcano', 'Earthquake', 'Tornado', 'Cyclone'], optionsKn: ['ಜ್ವಾಮುಖಿ', 'ಭೂಕಂಪ (Earthquake)', 'ಸುಂಟರಗಾಳಿ', 'ಚಂಡಮಾರುತ'], answer: 1, explanationEn: 'Earthquake is sudden earth shaking.', explanationKn: 'ಭೂಕಂಪನವೆಂದು ಕರೆಯಲಾಗುತ್ತದೆ.' },
+                    { questionEn: '14. Angle of reflection is always equal to:', questionKn: '14. ಪ್ರತಿಫಲನ ಕೋನವು ಯಾವಾಗಲೂ ಇದಕ್ಕೆ ಸಮಾನವಾಗಿರುತ್ತದೆ:', optionsEn: ['Angle of incidence', '90 degrees', '0 degrees', 'Critical angle'], optionsKn: ['ಪತನ ಕೋನ (Angle of incidence)', '90 ಡಿಗ್ರಿ', '0 ಡಿಗ್ರಿ', 'ಕ್ರಾಂತಿ ಕೋನ'], answer: 0, explanationEn: 'Angle of incidence equals angle of reflection.', explanationKn: 'ಪ್ರತಿಫಲನ ಕೋನವು ಪತನ ಕೋನಕ್ಕೆ ಸಮ.' },
+                    { questionEn: '15. Planets that do not have any moons (satellites):', questionKn: '15. ಯಾವುದೇ ಉಪಗ್ರಹಗಳನ್ನು (Moons) ಹೊಂದಿರದ ಗ್ರಹಗಳು:', optionsEn: ['Mars and Jupiter', 'Mercury and Venus', 'Earth and Mars', 'Saturn and Uranus'], optionsKn: ['ಮಂಗಳ ಮತ್ತು ಗುರು', 'ಬುಧ ಮತ್ತು ಶುಕ್ರ (Mercury and Venus)', 'ಭೂಮಿ ಮತ್ತು ಮಂಗಳ', 'ಶನಿ ಮತ್ತು ಯುರೇನಸ್'], answer: 1, explanationEn: 'Mercury and Venus have zero moons.', explanationKn: 'ಬುಧ ಮತ್ತು ಶುಕ್ರ ಗ್ರಹಗಳಿಗೆ ಉಪಗ್ರಹಗಳಿಲ್ಲ.' }
+                ]
+            },
+
+            // Class 9 Quizzes
+            {
+                id: 901, grade: '9', subjectEn: 'Science (Class 9)', subjectKn: 'ವಿಜ್ಞಾನ (9ನೇ ತರಗತಿ)',
+                titleEn: 'Class 9 Science: Complete 15-Question Assessment', titleKn: '9ನೇ ತರಗತಿ ವಿಜ್ಞಾನ: ಸಂಪೂರ್ಣ 15 ಪ್ರಶ್ನೆಗಳ ಮೌಲ್ಯಮಾಪನ',
+                questions: [
+                    { questionEn: '1. SI unit of acceleration is:', questionKn: '1. ತ್ವರಣದ (Acceleration) SI ಏಕಮಾನ:', optionsEn: ['m/s', 'm/s²', 'kg·m/s', 'Newton'], optionsKn: ['m/s', 'm/s² (ಮೀಟರ್ ಪ್ರತಿ ಸೆಕೆಂಡ್ ವರ್ಗ)', 'kg·m/s', 'ನ್ಯೂಟನ್'], answer: 1, explanationEn: 'Acceleration is rate of change of velocity.', explanationKn: 'ತ್ವರಣದ ಏಕಮಾನ m/s² ಆಗಿದೆ.' },
+                    { questionEn: '2. Newton’s Second Law of Motion gives measure of:', questionKn: '2. ನ್ಯೂಟನ್‌ನ ಎರಡನೇ ಚಲನೆಯ ನಿಯಮವು ಯಾವುದರ ಅಳತೆಯನ್ನು ನೀಡುತ್ತದೆ?', optionsEn: ['Velocity', 'Force', 'Acceleration', 'Inertia'], optionsKn: ['ವೇಗ', 'ಬಲ (Force)', 'ತ್ವರಣ', 'ಜಡತ್ವ'], answer: 1, explanationEn: 'F = ma gives force magnitude.', explanationKn: 'ಇದು ಬಲದ (Force) ಪರಿಮಾಣ ನೀಡುತ್ತದೆ.' },
+                    { questionEn: '3. Value of acceleration due to gravity (g) on Earth surface is approx:', questionKn: '3. ಭೂಮಿಯ ಮೇಲ್ಮೈಯಲ್ಲಿ ಗುರುತ್ವ ತ್ವರಣದ (g) ಮೌಲ್ಯ:', optionsEn: ['9.8 m/s²', '8.9 m/s²', '10.5 m/s²', '98 m/s²'], optionsKn: ['9.8 m/s²', '8.9 m/s²', '10.5 m/s²', '98 m/s²'], answer: 0, explanationEn: 'Standard g is approx 9.8 m/s².', explanationKn: 'g ಮೌಲ್ಯ ಸುಮಾರು 9.8 m/s² ಆಗಿದೆ.' },
+                    { questionEn: '4. Work done is zero when angle between force and displacement is:', questionKn: '4. ಬಲ ಮತ್ತು ಸ್ಥಾನಪಲ್ಲಟದ ನಡುವಿನ ಕೋನವು ಎಷ್ಟು ಇದ್ದಾಗ ಕೆಲಸವು ಸೊನ್ನೆ ಆಗುತ್ತದೆ?', optionsEn: ['0°', '90°', '180°', '45°'], optionsKn: ['0°', '90° (ಲಂಬಕೋನ)', '180°', '45°'], answer: 1, explanationEn: 'W = Fs cos(90°) = 0.', explanationKn: 'ಕೋನ 90° ಇದ್ದಾಗ ಕೆಲಸ ಸೊನ್ನೆ.' },
+                    { questionEn: '5. Sound waves are:', questionKn: '5. ಶಬ್ದ ಅಲೆಗಳು ಯಾವ ರೀತಿಯ ಅಲೆಗಳು?', optionsEn: ['Transverse waves', 'Longitudinal waves', 'Electromagnetic waves', 'Surface waves'], optionsKn: ['عرضية / ತಿರೆಯಲೆಗಳು', 'अनुदैर्ध्य / ಅನುದುರ್ಗ ಅಲೆಗಳು (Longitudinal)', 'ವಿದ್ಯುತ್ಕಾಂತೀಯ ಅಲೆಗಳು', 'ಮೇಲ್ಮೈ ಅಲೆಗಳು'], answer: 1, explanationEn: 'Sound travels as longitudinal pressure waves.', explanationKn: 'ಶಬ್ದ ಅಲೆಗಳು ಅನುದುರ್ಗ ಅಲೆಗಳಾಗಿವೆ.' },
+                    { questionEn: '6. Fundamental unit of life is:', questionKn: '6. ಜೀವಿಯ ಮೂಲಭೂತ ಘಟಕ ಯಾವುದು?', optionsEn: ['Tissue', 'Organ', 'Cell', 'Organism'], optionsKn: ['ಅಂಗಾಂಶ', 'ಅಂಗ', 'ಜೀವಕೋಶ (Cell)', 'ಜೀವಿ'], answer: 2, explanationEn: 'Cell is structural and functional unit of life.', explanationKn: 'ಜೀವಕೋಶವೇ ಮೂಲಭೂತ ಘಟಕ.' },
+                    { questionEn: '7. Plant tissue responsible for transport of water is:', questionKn: '7. ಸಸ್ಯಗಳಲ್ಲಿ ನೀರನ್ನು ಸಾಗಿಸುವ ಅಂಗಾಂಶ ಯಾವುದು?', optionsEn: ['Xylem', 'Phloem', 'Meristem', 'Collenchyma'], optionsKn: ['ಸೈಲೆಮ್ (Xylem)', 'ಫ್ಲೋಯಮ್', 'ಮೆರಿಸ್ಟೆಮ್', 'ಕೋಲೆಂಚೈಮಾ'], answer: 0, explanationEn: 'Xylem transports water and minerals.', explanationKn: 'ಸೈಲೆಮ್ ನೀರನ್ನು ಸಾಗಿಸುತ್ತದೆ.' },
+                    { questionEn: '8. Chemical symbol for Sodium is:', questionKn: '8. ಸೋಡಿಯಂನ ರಾಸಾಯನಿಕ ಸಂಕೇತ:', optionsEn: ['So', 'Sd', 'Na', 'N'], optionsKn: ['So', 'Sd', 'Na (Natrium)', 'N'], answer: 2, explanationEn: 'Na comes from Latin Natrium.', explanationKn: 'Na ಸಂಕೇತ ಬಳಸಲಾಗುತ್ತದೆ.' },
+                    { questionEn: '9. Mass number of an atom is sum of:', questionKn: '9. ಪರಮಾಣುವಿನ ದ್ರವ್ಯರಾಶಿ ಸಂಖ್ಯೆ (Mass Number) ಎಂದರೆ:', optionsEn: ['Protons and Electrons', 'Protons and Neutrons', 'Electrons and Neutrons', 'Neutrons only'], optionsKn: ['ಪ್ರೋಟಾನ್ ಮತ್ತು ಎಲೆಕ್ಟ್ರಾನ್', 'ಪ್ರೋಟಾನ್ ಮತ್ತು ನ್ಯೂಟ್ರಾನ್ (Protons + Neutrons)', 'ಎಲೆಕ್ಟ್ರಾನ್ ಮತ್ತು ನ್ಯೂಟ್ರಾನ್', 'ನ್ಯೂಟ್ರಾನ್ ಮಾತ್ರ'], answer: 1, explanationEn: 'Mass number = Protons + Neutrons in nucleus.', explanationKn: 'ಪ್ರೋಟಾನ್ ಮತ್ತು ನ್ಯೂಟ್ರಾನ್‌ಗಳ ಮೊತ್ತ.' },
+                    { questionEn: '10. Powerhouse of cell is:', questionKn: '10. ಜೀವಕೋಶದ ಶಕ್ತಿ ಕೇಂದ್ರ:', optionsEn: ['Ribosome', 'Mitochondria', 'Plastid', 'Lysosome'], optionsKn: ['ರೈಬೋಸೋಮ್', 'ಮೈಟೋಕಾಂಡ್ರಿಯಾ (Mitochondria)', 'ಪ್ಲಾಸ್ಟಿಡ್', 'ಲೈಸೋಸೋಮ್'], answer: 1, explanationEn: 'Mitochondria produce ATP.', explanationKn: 'ಮೈಟೋಕಾಂಡ್ರಿಯಾ ಶಕ್ತಿ ಕೇಂದ್ರವಾಗಿದೆ.' },
+                    { questionEn: '11. Which animal group has soft bodies often covered with a shell?', questionKn: '11. ಮೃದುವಾದ ದೇಹ ಹೊಂದಿದ್ದು ಸಾಮಾನ್ಯವಾಗಿ ಚಿಪ್ಪಿನಿಂದ ಆವೃತವಾಗಿರುವ ಪ್ರಾಣಿ ಗುಂಪು:', optionsEn: ['Arthropoda', 'Mollusca', 'Annelida', 'Porifera'], optionsKn: ['ಆರ್ಥ್ರೋಪೋಡಾ', 'ಮೊಲಸ್ಕಾ (Mollusca)', 'ಅನೆಲಿಡಾ', 'ಪೊರಿಫೆರಾ'], answer: 1, explanationEn: 'Molluscs have soft bodies, e.g., snails, octopuses.', explanationKn: 'ಮೊಲಸ್ಕಾ ಗುಂಪಿಗೆ ಸೇರಿವೆ.' },
+                    { questionEn: '12. Rate of doing work is called:', questionKn: '12. ಕೆಲಸ ಮಾಡುವ ದರವನ್ನು ಏನೆಂದು ಕರೆಯುತ್ತಾರೆ?', optionsEn: ['Energy', 'Power', 'Force', 'Momentum'], optionsKn: ['ಶಕ್ತಿ', 'ಸಾಮರ್ಥ್ಯ (Power)', 'ಬಲ', 'ಆವೇಗ'], answer: 1, explanationEn: 'Power = Work / Time.', explanationKn: 'ಸಾಮರ್ಥ್ಯ (Power) ಎಂದು ಕರೆಯಲಾಗುತ್ತದೆ.' },
+                    { questionEn: '13. Boiling point of water in Kelvin is:', questionKn: '13. ಕೆಲ್ವಿನ್ ಮಾನದಲ್ಲಿ ನೀರಿನ ಕುದಿಬಿಂದು ಎಷ್ಟು?', optionsEn: ['0 K', '100 K', '273 K', '373.15 K'], optionsKn: ['0 K', '100 K', '273 K', '373.15 K (373 K)'], answer: 3, explanationEn: '100°C + 273.15 = 373.15 K.', explanationKn: '373 K ಅಥವಾ 373.15 K ಆಗಿದೆ.' },
+                    { questionEn: '14. Mixture of salt and water is an example of:', questionKn: '14. ಉಪ್ಪು ಮತ್ತು ನೀರಿನ ಮಿಶ್ರಣವು ಇದಕ್ಕೆ ಉದಾಹರಣೆಯಾಗಿದೆ:', optionsEn: ['Homogeneous mixture', 'Heterogeneous mixture', 'Pure substance', 'Colloid'], optionsKn: ['ಸಜಾತಿಯ ಮಿಶ್ರಣ (Homogeneous)', 'ವಿಜಾತಿಯ ಮಿಶ್ರಣ', 'ಶುದ್ಧ ಪದಾರ್ಥ', 'ಕೊಲಾಯ್ಡ್'], answer: 0, explanationEn: 'Salt dissolves uniformly forming a solution.', explanationKn: 'ಇದು ಸಜಾತಿಯ ಮಿಶ್ರಣವಾಗಿದೆ.' },
+                    { questionEn: '15. Which of the following is a communicable disease?', questionKn: '15. ಕೆಳಗಿನವುಗಳಲ್ಲಿ ಯಾವುದು ಸಾಂಕ್ರಾಮಿಕ ರೋಗ?', optionsEn: ['Diabetes', 'Cancer', 'Cholera', 'High BP'], optionsKn: ['ಮಧುಮೇಹ', 'ಕ್ಯಾನ್ಸರ್', 'ಕಾಲರಾ (Cholera)', 'ಅಧಿಕ ರಕ್ತದೊತ್ತಡ'], answer: 2, explanationEn: 'Cholera spreads through contaminated water/food.', explanationKn: 'ಕಾಲರಾ ಸಾಂಕ್ರಾಮಿಕ ರೋಗವಾಗಿದೆ.' }
+                ]
+            },
+
+            // Class 10 Quizzes
+            {
+                id: 1001, grade: '10', subjectEn: 'Science (Class 10)', subjectKn: 'ವಿಜ್ಞಾನ (10ನೇ ತರಗತಿ)',
+                titleEn: 'SSLC Class 10 Science: Complete 15-Question Assessment', titleKn: 'SSLC 10ನೇ ತರಗತಿ ವಿಜ್ಞಾನ: ಸಂಪೂರ್ಣ 15 ಪ್ರಶ್ನೆಗಳ ಮೌಲ್ಯಮಾಪನ',
+                questions: [
+                    { questionEn: '1. Chemical formula of quicklime:', questionKn: '1. ಸುಣ್ಣದ ರಾಸಾಯನಿಕ ಸೂತ್ರ:', optionsEn: ['CaCO3', 'CaO', 'Ca(OH)2', 'CaCl2'], optionsKn: ['CaCO3', 'CaO', 'Ca(OH)2', 'CaCl2'], answer: 1, explanationEn: 'Calcium oxide (CaO) is quicklime.', explanationKn: 'ಕ್ಯಾಲ್ಸಿಯಂ ಆಕ್ಸೈಡ್ (CaO) ಸುಣ್ಣವಾಗಿದೆ.' },
+                    { questionEn: '2. Mirror used by dentists to view teeth:', questionKn: '2. ಹಲ್ಲುಗಳನ್ನು ದೊಡ್ಡದಾಗಿ ನೋಡಲು ದಂತವೈದ್ಯರು ಬಳಸುವ ದರ್ಪಣ:', optionsEn: ['Convex', 'Concave', 'Plane', 'Cylindrical'], optionsKn: ['ಪೀನ ದರ್ಪಣ', 'ನಿಮ್ನ ದರ್ಪಣ (Concave)', 'ಸಮತಲ ದರ್ಪಣ', 'ಸಿಲಿಂಡರ್'], answer: 1, explanationEn: 'Concave mirrors magnify close objects.', explanationKn: 'ನಿಮ್ನ ದರ್ಪಣ ದೊಡ್ಡ ಪ್ರತಿಬಿಂಬ ನೀಡುತ್ತದೆ.' },
+                    { questionEn: '3. SI unit of electric current:', questionKn: '3. ವಿದ್ಯುತ್ ಪ್ರವಾಹದ SI ಏಕಮಾನ:', optionsEn: ['Volt', 'Ampere', 'Ohm', 'Watt'], optionsKn: ['ವೋಲ್ಟ್', 'ಆಂಪಿಯರ್ (Ampere)', 'ಓಮ್', 'ವ್ಯಾಟ್'], answer: 1, explanationEn: 'Current is measured in Amperes.', explanationKn: 'ವಿದ್ಯುತ್ ಪ್ರವಾಹವನ್ನು ಆಂಪಿಯರ್‌ನಲ್ಲಿ ಅಳೆಯಲಾಗುತ್ತದೆ.' },
+                    { questionEn: '4. pH of a neutral solution is:', questionKn: '4. ತಟಸ್ಥ ದ್ರಾವಣದ pH ಮೌಲ್ಯ:', optionsEn: ['0', '7', '14', '5'], optionsKn: ['0', '7', '14', '5'], answer: 1, explanationEn: 'Neutral pH is exactly 7.', explanationKn: 'ತಟಸ್ಥ pH 7 ಇರುತ್ತದೆ.' },
+                    { questionEn: '5. Liquid metal at room temperature:', questionKn: '5. ಕೊಠಡಿಯ ತಾಪಮಾನದಲ್ಲಿ ದ್ರವವಾಗಿರುವ ಲೋಹ:', optionsEn: ['Iron', 'Mercury', 'Copper', 'Zinc'], optionsKn: ['ಕಬ್ಬಿಣ', 'ಪಾದರಸ (Mercury)', 'ತಾಮ್ರ', 'ಸತು'], answer: 1, explanationEn: 'Mercury is liquid metal.', explanationKn: 'ಪಾದರಸವು ದ್ರವ ಲೋಹವಾಗಿದೆ.' },
+                    { questionEn: '6. Functional group of alcohols:', questionKn: '6. ಆಲ್ಕೋಹಾಲ್‌ಗಳ ಕ್ರಿಯಾತ್ಮಕ ಗುಂಪು:', optionsEn: ['-OH', '-CHO', '-COOH', '-CO-'], optionsKn: ['-OH', '-CHO', '-COOH', '-CO-'], answer: 0, explanationEn: '-OH represents hydroxyl group.', explanationKn: '-OH ಗುಂಪು ಆಲ್ಕೋಹಾಲ್ ಸೂಚಿಸುತ್ತದೆ.' },
+                    { questionEn: '7. Power of a lens with focal length +20 cm:', questionKn: '7. ನಾಭಿದೂರ +20 ಸೆಂ.ಮೀ ಇರುವ ಮಸೂರದ ಸಾಮರ್ಥ್ಯ:', optionsEn: ['+5 D', '-5 D', '+2 D', '-2 D'], optionsKn: ['+5 D', '-5 D', '+2 D', '-2 D'], answer: 0, explanationEn: 'P = 1 / 0.20 = +5 Diopters.', explanationKn: 'P = 1 / 0.20 = +5 ಡೈಪ್ಟರ್.' },
+                    { questionEn: '8. Powerhouse of the cell:', questionKn: '8. ಜೀವಕೋಶದ ಶಕ್ತಿ ಕೇಂದ್ರ:', optionsEn: ['Nucleus', 'Mitochondria', 'Ribosome', 'Lysosome'], optionsKn: ['ನ್ಯೂಕ್ಲಿಯಸ್', 'ಮೈಟೋಕಾಂಡ್ರಿಯಾ (Mitochondria)', 'ರೈಬೋಸೋಮ್', 'ಲೈಸೋಸೋಮ್'], answer: 1, explanationEn: 'Mitochondria generate ATP.', explanationKn: 'ಮೈಟೋಕಾಂಡ್ರಿಯಾ ಶಕ್ತಿ ಉತ್ಪಾದಿಸುತ್ತದೆ.' },
+                    { questionEn: '9. Mendel conducted heredity experiments on:', questionKn: '9. ಮೆಂಡೆಲ್ ಅನುವಂಶಿಕತೆ ಪ್ರಯೋಗ ನಡೆಸಿದ ಸಸ್ಯ:', optionsEn: ['Pea plant', 'Mustard', 'Rose', 'Hibiscus'], optionsKn: ['ಬಟಾಣಿ ಸಸ್ಯ (Pea plant)', 'ಸಾಸಿವೆ', 'ಗುಲಾಬಿ', 'ದಾಸವಾಳ'], answer: 0, explanationEn: 'Mendel used garden pea plants.', explanationKn: 'ಮೆಂಡೆಲ್ ಬಟಾಣಿ ಸಸ್ಯ ಬಳಸಿದರು.' },
+                    { questionEn: '10. Human eye forms image on:', questionKn: '10. ಮಾನವ ಕಣ್ಣು ಪ್ರತಿಬಿಂಬ ರಚಿಸುವ ಸ್ಥಳ:', optionsEn: ['Cornea', 'Pupil', 'Retina', 'Iris'], optionsKn: ['ಕಾರ್ನಿಯಾ', 'ಕಣ್ಣಿನ ಪಾಪೆ', 'ದೃಷ್ಟಿಪಟಲ (Retina)', 'ಐರಿಸ್'], answer: 2, explanationEn: 'Retina acts as the screen.', explanationKn: 'ದೃಷ್ಟಿಪಟಲದ ಮೇಲೆ ಪ್ರತಿಬಿಂಬ ಬೀಳುತ್ತದೆ.' },
+                    { questionEn: '11. Biogas mainly consists of:', questionKn: '11. ಸಗಣಿ ಅನಿಲದಲ್ಲಿ ಮುಖ್ಯವಾಗಿರುವುದು:', optionsEn: ['Methane', 'Ethane', 'Propane', 'Butane'], optionsKn: ['ಮೀಥೇನ್ (Methane)', 'ಈಥೇನ್', 'ಪ್ರೋಪೇನ್', 'ಬ್ಯೂಟೇನ್'], answer: 0, explanationEn: 'Methane is primary combustible gas.', explanationKn: 'ಮೀಥೇನ್ ಮುಖ್ಯ ಅನಿಲ.' },
+                    { questionEn: '12. Splitting of white light into seven colors:', questionKn: '12. ಬಿಳಿ ಬೆಳಕು ಏಳು ಬಣ್ಣಗಳಾಗಿ ವಿಭಜನೆಗೊಳ್ಳುವುದು:', optionsEn: ['Refraction', 'Dispersion', 'Reflection', 'Scattering'], optionsKn: ['ವಕ್ರೀಭವನ', 'ಪ್ರಕ್ಷೇಪಣ / ವಿಭಜನೆ (Dispersion)', 'ಪ್ರತಿಫಲನ', 'ಚದುರುವಿಕೆ'], answer: 1, explanationEn: 'Dispersion produces spectrum.', explanationKn: 'ಬೆಳಕಿನ ವಿಭಜನೆ ಎನ್ನಲಾಗುತ್ತದೆ.' },
+                    { questionEn: '13. Universal indicator color at pH 7:', questionKn: '13. pH 7 ರಲ್ಲಿ ಸಾರ್ವತ್ರಿಕ ಸೂಚಕದ ಬಣ್ಣ:', optionsEn: ['Red', 'Green', 'Blue', 'Yellow'], optionsKn: ['ಕೆಂಪು', 'ಹಸಿರು (Green)', 'ನೀಲಿ', 'ಹಳದಿ'], answer: 1, explanationEn: 'Neutral pH appears green.', explanationKn: 'ತಟಸ್ಥ pH ನಲ್ಲಿ ಹಸಿರು ಬಣ್ಣವಿರುತ್ತದೆ.' },
+                    { questionEn: '14. Hormone regulating blood sugar:', questionKn: '14. ರಕ್ತದಲ್ಲಿನ ಸಕ್ಕರೆ ಮಟ್ಟ ನಿಯಂತ್ರಿಸುವ ಹಾರ್ಮೋನ್:', optionsEn: ['Adrenaline', 'Insulin', 'Thyroxine', 'Growth hormone'], optionsKn: ['ಅಡ್ರಿನಾಲಿನ್', 'ಇನ್ಸುಲಿನ್ (Insulin)', 'ಥೈರಾಕ್ಸಿನ್', 'ಬೆಳವಣಿಗೆ ಹಾರ್ಮೋನ್'], answer: 1, explanationEn: 'Insulin regulates glucose levels.', explanationKn: 'ಇನ್ಸುಲಿನ್ ಸಕ್ಕರೆ ಮಟ್ಟ ನಿಯಂತ್ರಿಸುತ್ತದೆ.' },
+                    { questionEn: '15. Renewable source of energy:', questionKn: '15. ನವೀಕರಿಸಬಹುದಾದ ಶಕ್ತಿಯ ಮೂಲ:', optionsEn: ['Coal', 'Petroleum', 'Solar energy', 'Natural gas'], optionsKn: ['ಕಲ್ಲಿದ್ದಲು', 'ಪೆಟ್ರೋಲಿಯಮ್', 'ಸೌರ ಶಕ್ತಿ (Solar energy)', 'ನೈಸರ್ಗಿಕ ಅನಿಲ'], answer: 2, explanationEn: 'Solar energy is inexhaustible.', explanationKn: 'ಸೌರ ಶಕ್ತಿ ನವೀಕರಿಸಬಹುದಾದ ಮೂಲ.' }
+                ]
+            }
+        ];
+
+        // --- UI & Language Functions ---
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+
+            const btnEn = document.getElementById('lang-en');
+            const btnKn = document.getElementById('lang-kn');
+            if (lang === 'en') {
+                btnEn.className = 'px-3 py-1 rounded-md text-xs sm:text-sm font-semibold transition bg-white text-blue-800 shadow';
+                btnKn.className = 'px-3 py-1 rounded-md text-xs sm:text-sm font-semibold transition text-blue-200 hover:text-white';
+            } else {
+                btnKn.className = 'px-3 py-1 rounded-md text-xs sm:text-sm font-semibold transition bg-white text-blue-800 shadow';
+                btnEn.className = 'px-3 py-1 rounded-md text-xs sm:text-sm font-semibold transition text-blue-200 hover:text-white';
+            }
+
+            const t = translations[lang];
+            document.getElementById('banner-text').textContent = t.bannerText;
+            document.getElementById('banner-btn').textContent = t.bannerBtn;
+            document.getElementById('app-title').textContent = t.appTitle;
+            document.getElementById('app-subtitle').textContent = t.appSubtitle;
+            document.getElementById('nav-finder').textContent = t.navFinder;
+            document.getElementById('nav-resources').textContent = t.navResources;
+            document.getElementById('hero-badge').textContent = t.heroBadge;
+            document.getElementById('hero-heading').textContent = t.heroHeading;
+            document.getElementById('hero-desc').textContent = t.heroDesc;
+            document.getElementById('grade-label').textContent = t.gradeLabel;
+            document.getElementById('grade-all-btn').textContent = t.gradeAll;
+            document.getElementById('finder-title').textContent = t.finderTitle;
+            document.getElementById('finder-desc').textContent = t.finderDesc;
+            document.getElementById('lbl-board').textContent = t.lblBoard;
+            document.getElementById('lbl-class').textContent = t.lblClass;
+            document.getElementById('lbl-subject').textContent = t.lblSubject;
+            document.getElementById('btn-find-pdf').textContent = t.btnFindPdf;
+            document.getElementById('btn-find-vid').textContent = t.btnFindVid;
+            document.getElementById('tab-title-quizzes').textContent = t.tabTitleQuizzes;
+            document.getElementById('tab-title-textbooks').textContent = t.tabTitleTextbooks;
+            document.getElementById('tab-title-videos').textContent = t.tabTitleVideos;
+            document.getElementById('textbook-header').textContent = t.textbookHeader;
+            document.getElementById('video-header').textContent = t.videoHeader;
+            document.getElementById('quiz-header').textContent = t.quizHeader;
+            document.getElementById('portals-heading').textContent = t.portalsHeading;
+            document.getElementById('portals-desc').textContent = t.portalsDesc;
+            document.getElementById('footer-title').textContent = t.footerTitle;
+            document.getElementById('footer-desc').textContent = t.footerDesc;
+            document.getElementById('footer-copy').textContent = t.footerCopy;
+
+            renderAll();
+        }
+
+        function filterGrade(grade) {
+            currentGradeFilter = grade;
+            if (grade !== 'all') {
+                document.getElementById('sel-class').value = grade;
+            }
+            document.querySelectorAll('.grade-btn').forEach(btn => {
+                if (btn.getAttribute('data-grade') === grade) {
+                    btn.className = 'grade-btn bg-white text-blue-800 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold shadow transition';
+                } else {
+                    btn.className = 'grade-btn bg-blue-900/60 text-blue-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium hover:bg-blue-900 transition';
+                }
+            });
+            renderAll();
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.catalogue-section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById('section-' + tab).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = 'tab-btn flex items-center space-x-2 py-3 px-6 border-b-2 font-medium text-sm sm:text-base border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap';
+            });
+            document.getElementById('tab-' + tab).className = 'tab-btn flex items-center space-x-2 py-3 px-6 border-b-2 font-semibold text-sm sm:text-base border-blue-600 text-blue-600 whitespace-nowrap';
+        }
+
+        function toggleOfflineNotice() {
+            alert(translations[currentLang].offlineAlert);
+        }
+
+        function renderAll() {
+            renderTextbooks();
+            renderVideos();
+            renderQuizzesList();
+        }
+
+        function renderTextbooks() {
+            const grid = document.getElementById('textbooks-grid');
+            const filtered = currentGradeFilter === 'all' ? textbooksData : textbooksData.filter(b => b.grade === currentGradeFilter);
+            document.getElementById('textbook-count').textContent = `${filtered.length} items`;
+
+            grid.innerHTML = filtered.map(book => `
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between text-center">
+                    <div>
+                        <div class="w-16 h-16 mx-auto mb-4 bg-blue-50 rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-blue-100">
+                            ${book.icon}
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-semibold bg-blue-50 text-blue-700 px-2.5 py-1 rounded-md">Class ${book.grade}</span>
+                            <span class="text-xs text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-medium">${book.source}</span>
+                        </div>
+                        <p class="text-xs font-semibold text-slate-500 mb-1">${currentLang === 'en' ? book.subjectEn : book.subjectKn}</p>
+                        <h4 class="font-bold text-slate-800 text-base mb-2">${currentLang === 'en' ? book.titleEn : book.titleKn}</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-4">${currentLang === 'en' ? book.descEn : book.descKn}</p>
+                    </div>
+                    <a href="${book.pdfUrl}" target="_blank" rel="noopener noreferrer" class="w-full text-center bg-blue-700 hover:bg-blue-800 text-white text-xs sm:text-sm font-semibold py-2.5 px-4 rounded-xl transition block shadow">
+                        ${translations[currentLang].readBtn}
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        function renderVideos() {
+            const grid = document.getElementById('videos-grid');
+            const filtered = currentGradeFilter === 'all' ? videosData : videosData.filter(v => v.grade === currentGradeFilter);
+            document.getElementById('video-count').textContent = `${filtered.length} items`;
+
+            grid.innerHTML = filtered.map(vid => `
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between text-center">
+                    <div>
+                        <div class="w-16 h-16 mx-auto mb-4 bg-indigo-50 rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-indigo-100">
+                            ▶️
+                        </div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-semibold bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-md">Class ${vid.grade}</span>
+                            <span class="text-xs text-slate-400 font-medium">${vid.quality}</span>
+                        </div>
+                        <p class="text-xs font-semibold text-indigo-600 mb-1">${currentLang === 'en' ? vid.subjectEn : vid.subjectKn}</p>
+                        <h4 class="font-bold text-slate-800 text-base mb-4">${currentLang === 'en' ? vid.titleEn : vid.titleKn}</h4>
+                    </div>
+                    <a href="${vid.videoUrl}" target="_blank" rel="noopener noreferrer" class="w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold py-2.5 px-4 rounded-xl transition block shadow">
+                        ${translations[currentLang].watchBtn}
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        // --- Quiz Engine ---
+        let activeQuiz = null;
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function renderQuizzesList() {
+            const container = document.getElementById('quiz-list-container');
+            const filtered = currentGradeFilter === 'all' ? quizzesData : quizzesData.filter(q => q.grade === currentGradeFilter);
+            document.getElementById('quiz-count').textContent = `${filtered.length} quizzes`;
+
+            container.innerHTML = filtered.map(quiz => `
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between text-center">
+                    <div>
+                        <div class="w-16 h-16 mx-auto mb-4 bg-amber-50 rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-amber-100">
+                            📝
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-semibold bg-amber-50 text-amber-700 px-2.5 py-1 rounded-md">Class ${quiz.grade}</span>
+                            <span class="text-xs text-slate-500 font-bold">15 Questions</span>
+                        </div>
+                        <p class="text-xs font-semibold text-blue-600 mb-1">${currentLang === 'en' ? quiz.subjectEn : quiz.subjectKn}</p>
+                        <h4 class="font-bold text-slate-800 text-base mb-4">${currentLang === 'en' ? quiz.titleEn : quiz.titleKn}</h4>
+                    </div>
+                    <button onclick="startQuiz(${quiz.id})" class="w-full bg-blue-700 hover:bg-blue-800 text-white text-xs sm:text-sm font-semibold py-2.5 px-4 rounded-xl transition shadow">
+                        ${translations[currentLang].startQuizBtn}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function startQuiz(quizId) {
+            activeQuiz = quizzesData.find(q => q.id === quizId);
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById('quiz-list-container').classList.add('hidden');
+            document.getElementById('quiz-player').classList.remove('hidden');
+            document.getElementById('quiz-result-container').classList.add('hidden');
+            document.getElementById('quiz-question-container').classList.remove('hidden');
+            document.getElementById('quiz-player-badge').textContent = currentLang === 'en' ? activeQuiz.subjectEn : activeQuiz.subjectKn;
+            document.getElementById('quiz-player-title').textContent = currentLang === 'en' ? activeQuiz.titleEn : activeQuiz.titleKn;
+            document.getElementById('quiz-exit-btn').textContent = translations[currentLang].exitQuiz;
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = activeQuiz.questions[currentQuestionIndex];
+            const qText = currentLang === 'en' ? q.questionEn : q.questionKn;
+            const opts = currentLang === 'en' ? q.optionsEn : q.optionsKn;
+
+            document.getElementById('quiz-question-container').innerHTML = `
+                <p class="text-xs font-semibold text-slate-400 mb-2">Question ${currentQuestionIndex + 1} of ${activeQuiz.questions.length}</p>
+                <h5 class="text-base sm:text-lg font-bold text-slate-800 mb-4">${qText}</h5>
+                <div class="space-y-2.5">
+                    ${opts.map((opt, idx) => `
+                        <button onclick="selectAnswer(${idx})" class="opt-btn w-full text-left p-3.5 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-sm font-medium transition">
+                            ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+                <div id="answer-feedback" class="hidden mt-4 p-3.5 rounded-xl text-sm"></div>
+            `;
+        }
+
+        function selectAnswer(selectedIndex) {
+            const q = activeQuiz.questions[currentQuestionIndex];
+            document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+            const feedback = document.getElementById('answer-feedback');
+            feedback.classList.remove('hidden');
+
+            const buttons = document.querySelectorAll('.opt-btn');
+            if (selectedIndex === q.answer) {
+                score++;
+                buttons[selectedIndex].classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-800');
+                feedback.className = 'mt-4 p-3.5 rounded-xl text-sm bg-emerald-50 text-emerald-800 border border-emerald-200';
+            } else {
+                buttons[selectedIndex].classList.add('bg-rose-50', 'border-rose-500', 'text-rose-800');
+                buttons[q.answer].classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-800');
+                feedback.className = 'mt-4 p-3.5 rounded-xl text-sm bg-rose-50 text-rose-800 border border-rose-200';
+            }
+
+            const expText = currentLang === 'en' ? q.explanationEn : q.explanationKn;
+            feedback.innerHTML = `
+                <p class="mb-3">${expText}</p>
+                <button onclick="nextQuestion()" class="bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-blue-800">
+                    ${currentQuestionIndex + 1 < activeQuiz.questions.length ? 'Next Question →' : 'See Results'}
+                </button>
+            `;
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < activeQuiz.questions.length) {
+                renderQuestion();
+            } else {
+                document.getElementById('quiz-question-container').classList.add('hidden');
+                document.getElementById('quiz-result-container').classList.remove('hidden');
+                document.getElementById('result-heading').textContent = translations[currentLang].quizCompleted;
+                document.getElementById('restart-btn').textContent = translations[currentLang].restartQuiz;
+                document.getElementById('score-display').textContent = score;
+                document.getElementById('total-display').textContent = activeQuiz.questions.length;
+
+                const t = translations[currentLang];
+                const ratio = score / activeQuiz.questions.length;
+                document.getElementById('result-message').textContent =
+                    ratio === 1 ? t.scoreMsgGreat : ratio >= 0.5 ? t.scoreMsgGood : t.scoreMsgRetry;
+            }
+        }
+
+        function restartQuiz() { startQuiz(activeQuiz.id); }
+        function exitQuiz() {
+            document.getElementById('quiz-player').classList.add('hidden');
+            document.getElementById('quiz-list-container').classList.remove('hidden');
+        }
+
+        renderAll();
+    </script>
+</body>
+</html>
